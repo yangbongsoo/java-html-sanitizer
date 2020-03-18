@@ -65,41 +65,28 @@ public class NaverPolicyTest {
 	public String[] pDefaultAttributeArray = {"align"};
 	public String[] paramDefaultAttributeArray = {"name", "type", "value", "valuetype"};
 	public String[] preDefaultAttributeArray = {"width"};
+	public String[] progressDefaultAttributeArray = {"max", "value"};
+	public String[] qDefaultAttributeArray = {"cite"};
+	public String[] selectDefaultAttributeArray = {"autofocus", "disabled", "form", "multiple", "name", "required", "size"};
 
+	// exclude attribute : srcset
+	public String[] sourceDefaultAttributeArray = {"src", "media", "sizes", "type"};
+	public String[] tableDefaultAttributeArray = {"align", "bgcolor", "border", "cellpadding", "cellspacing", "frame", "rules", "summary", "width"};
+	public String[] tbodyDefaultAttributeArray = {"align", "char", "charoff", "valign"};
 
+	// exclude attribute : nowrap
+	public String[] tdDefaultAttributeArray = {"abbr", "align", "axis", "bgcolor", "char", "charoff", "colspan", "headers", "height", "rowspan", "scope", "valign", "width"};
+	public String[] textareaDefaultAttributeArray = {"autofocus", "cols", "dirname", "disabled", "form", "maxlength", "name", "placeholder", "readonly", "required", "rows", "wrap"};
+	public String[] tfootDefaultAttributeArray = {"align", "char", "charoff", "valign"};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	// exclude attribute : nowrap, sorted
+	public String[] thDefaultAttributeArray = {"abbr", "align", "axis", "bgcolor", "char", "charoff", "colspan", "headers", "height", "rowspan", "scope", "valign", "width"};
+	public String[] theadDefaultAttributeArray = {"align", "char", "charoff", "valign"};
+	public String[] timeDefaultAttributeArray = {"datetime"};
+	public String[] trDefaultAttributeArray = {"align", "bgcolor", "char", "charoff", "valign"};
+	public String[] trackDefaultAttributeArray = {"default", "kind", "label", "src", "srclang"};
+	public String[] ulDefaultAttributeArray = {"compact", "type"};
+	public String[] videoDefaultAttributeArray = {"autoplay", "controls", "height", "loop", "muted", "poster", "preload", "src", "width"};
 
 	PolicyFactory NAVER_DEFAULT_POLICY;
 	PolicyFactory OVERRIDED_POLICY_DEFINITION;
@@ -177,6 +164,38 @@ public class NaverPolicyTest {
 		String[] paramAttributeArray = addAll(paramDefaultAttributeArray, w3schoolsGlobalAttributeArray);
 		// pre
 		String[] preAttributeArray = addAll(preDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// progress
+		String[] progressAttributeArray = addAll(progressDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// q
+		String[] qAttributeArray = addAll(qDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// select
+		String[] selectAttributeArray = addAll(selectDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// source
+		String[] sourceAttributeArray = addAll(sourceDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// table
+		String[] tableAttributeArray = addAll(tableDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// tbody
+		String[] tbodyAttributeArray = addAll(tbodyDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// td
+		String[] tdAttributeArray = addAll(tdDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// textarea
+		String[] textareaAttributeArray = addAll(textareaDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// tfoot
+		String[] tfootAttributeArray = addAll(tfootDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// th
+		String[] thAttributeArray = addAll(thDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// thead
+		String[] theadAttributeArray = addAll(theadDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// time
+		String[] timeAttributeArray = addAll(timeDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// tr
+		String[] trAttributeArray = addAll(trDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// track
+		String[] trackAttributeArray = addAll(trackDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// ul
+		String[] ulAttributeArray = addAll(ulDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		// video
+		String[] videoAttributeArray = addAll(videoDefaultAttributeArray, w3schoolsGlobalAttributeArray);
 
 		NAVER_DEFAULT_POLICY = new HtmlPolicyBuilder()
 
@@ -423,7 +442,113 @@ public class NaverPolicyTest {
 			.allowElements("pre")
 			.allowAttributes(preAttributeArray).onElements("pre")
 
+			.allowElements("progress")
+			.allowAttributes(progressAttributeArray).onElements("progress")
 
+			.allowElements("q")
+			.allowAttributes(qAttributeArray).onElements("q")
+
+			.allowElements("rp")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("rp")
+
+			.allowElements("rt")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("rt")
+
+			.allowElements("ruby")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("ruby")
+
+			.allowElements("s")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("s")
+
+			.allowElements("samp")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("samp")
+
+			// script(exclude element)
+
+			.allowElements("section")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("section")
+
+			.allowElements("select")
+			.allowAttributes(selectAttributeArray).onElements("select")
+
+			.allowElements("small")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("small")
+
+			.allowElements("source")
+			.allowAttributes(sourceAttributeArray).onElements("source")
+
+			.allowElements("span")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("span")
+
+			.allowElements("strike")
+
+			.allowElements("strong")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("strong")
+
+			// style(exclude element)
+
+			.allowElements("sub")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("sub")
+
+			.allowElements("summary")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("summary")
+
+			.allowElements("sup")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("sup")
+
+			// svg(exclude element)
+
+			.allowElements("table")
+			.allowAttributes(tableAttributeArray).onElements("table")
+
+			.allowElements("tbody")
+			.allowAttributes(tbodyAttributeArray).onElements("tbody")
+
+			.allowElements("td")
+			.allowAttributes(tdAttributeArray).onElements("td")
+
+			// template(exclude element)
+
+			.allowElements("textarea")
+			.allowAttributes(textareaAttributeArray).onElements("textarea")
+
+			.allowElements("tfoot")
+			.allowAttributes(tfootAttributeArray).onElements("tfoot")
+
+			.allowElements("th")
+			.allowAttributes(thAttributeArray).onElements("th")
+
+			.allowElements("thead")
+			.allowAttributes(theadAttributeArray).onElements("thead")
+
+			.allowElements("time")
+			.allowAttributes(timeAttributeArray).onElements("time")
+
+			.allowElements("title")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("title")
+
+			.allowElements("tr")
+			.allowAttributes(trAttributeArray).onElements("tr")
+
+			.allowElements("track")
+			.allowAttributes(trackAttributeArray).onElements("track")
+
+			.allowElements("tt")
+
+			.allowElements("u")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("u")
+
+			.allowElements("ul")
+			.allowAttributes(ulAttributeArray).onElements("ul")
+
+			.allowElements("var")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("var")
+
+			.allowElements("video")
+			.allowAttributes(videoAttributeArray).onElements("video")
+
+			.allowElements("wbr")
+			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("wbr")
 
 			.allowUrlProtocols("https", "http")
 			.toFactory();
