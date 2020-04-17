@@ -6,10 +6,12 @@ import org.owasp.html.PolicyFactory;
 public class NaverHtmlPolicy {
 
 	// exclude attribute : translate, contenteditable, data-*, draggable, dropzone, spellcheck
-	private String[] w3schoolsGlobalAttributeArray = {"accesskey", "class", "dir", "hidden", "id", "lang", "tabindex", "title", "style"};
+//	private String[] w3schoolsGlobalAttributeArray = {"accesskey", "class", "dir", "hidden", "id", "lang", "tabindex", "title", "style"};
 
 	// exclude attribute : autocapitalize contenteditable contextmenu data-* draggable dropzone inputmode is itemid itemprop itemref itemscope itemtype part slot spellcheck translate
 	private String[] mdnGlobalAttributeArray = {"accesskey", "class", "dir", "exportparts", "hidden", "id", "lang", "style", "tabindex", "title"};
+
+	// MDN doesn't have media attribute (but w3schools have)
 	private String[] aDefaultAttributeArray = {"charset", "coords", "href", "hreflang", "media", "name", "rel", "rev", "shape", "target", "type"};
 	private String[] appletDefaultAttributeArray = {"code", "object", "align", "alt", "archive", "codebase", "height", "hspace", "name", "vspace", "width"};
 
@@ -93,106 +95,104 @@ public class NaverHtmlPolicy {
 	private static NaverHtmlPolicy instance;
 
 	private NaverHtmlPolicy() {
-		// todo security team have to confirm the global attributes (mdn or w3schools or something else)
-
 		// a
-		String[] aAttributeArray = addAll(aDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] aAttributeArray = addAll(aDefaultAttributeArray, mdnGlobalAttributeArray);
 		// area
-		String[] areaAttributeArray = addAll(areaDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] areaAttributeArray = addAll(areaDefaultAttributeArray, mdnGlobalAttributeArray);
 		// audio
-		String[] audioAttributeArray = addAll(audioDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] audioAttributeArray = addAll(audioDefaultAttributeArray, mdnGlobalAttributeArray);
 		// blockquote
-		String[] blockquoteAttributeArray = addAll(blockquoteDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] blockquoteAttributeArray = addAll(blockquoteDefaultAttributeArray, mdnGlobalAttributeArray);
 		// button
-		String[] buttonAttributeArray = addAll(buttonDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] buttonAttributeArray = addAll(buttonDefaultAttributeArray, mdnGlobalAttributeArray);
 		// canvas
-		String[] canvasAttributeArray = addAll(canvasDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] canvasAttributeArray = addAll(canvasDefaultAttributeArray, mdnGlobalAttributeArray);
 		// caption
-		String[] captionAttributeArray = addAll(captionDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] captionAttributeArray = addAll(captionDefaultAttributeArray, mdnGlobalAttributeArray);
 		// col
-		String[] colAttributeArray = addAll(colDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] colAttributeArray = addAll(colDefaultAttributeArray, mdnGlobalAttributeArray);
 		// colgroup
-		String[] colgroupAttributeArray = addAll(colgroupDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] colgroupAttributeArray = addAll(colgroupDefaultAttributeArray, mdnGlobalAttributeArray);
 		// del
-		String[] delAttributeArray = addAll(delDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] delAttributeArray = addAll(delDefaultAttributeArray, mdnGlobalAttributeArray);
 		// details
-		String[] detailsAttributeArray = addAll(detailsDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] detailsAttributeArray = addAll(detailsDefaultAttributeArray, mdnGlobalAttributeArray);
 		// div
-		String[] divAttributeArray = addAll(divDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] divAttributeArray = addAll(divDefaultAttributeArray, mdnGlobalAttributeArray);
 		// fieldset
-		String[] fieldsetAttributeArray = addAll(fieldsetDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] fieldsetAttributeArray = addAll(fieldsetDefaultAttributeArray, mdnGlobalAttributeArray);
 		// form
-		String[] formAttributeArray = addAll(formDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] formAttributeArray = addAll(formDefaultAttributeArray, mdnGlobalAttributeArray);
 		// h1 - h6
-		String[] h1Toh6AttributeArray = addAll(h1Toh6DefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] h1Toh6AttributeArray = addAll(h1Toh6DefaultAttributeArray, mdnGlobalAttributeArray);
 		// head
-		String[] headAttributeArray = addAll(headDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] headAttributeArray = addAll(headDefaultAttributeArray, mdnGlobalAttributeArray);
 		// hr
-		String[] hrAttributeArray = addAll(hrDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] hrAttributeArray = addAll(hrDefaultAttributeArray, mdnGlobalAttributeArray);
 		// img
-		String[] imgAttributeArray = addAll(imgDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] imgAttributeArray = addAll(imgDefaultAttributeArray, mdnGlobalAttributeArray);
 		// input
-		String[] inputAttributeArray = addAll(inputDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] inputAttributeArray = addAll(inputDefaultAttributeArray, mdnGlobalAttributeArray);
 		// ins
-		String[] insAttributeArray = addAll(insDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] insAttributeArray = addAll(insDefaultAttributeArray, mdnGlobalAttributeArray);
 		// keygen
-		String[] keygenAttributeArray = addAll(keygenDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] keygenAttributeArray = addAll(keygenDefaultAttributeArray, mdnGlobalAttributeArray);
 		// label
-		String[] labelAttributeArray = addAll(labelDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] labelAttributeArray = addAll(labelDefaultAttributeArray, mdnGlobalAttributeArray);
 		// legend
-		String[] legendAttributeArray = addAll(legendDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] legendAttributeArray = addAll(legendDefaultAttributeArray, mdnGlobalAttributeArray);
 		// li
-		String[] liAttributeArray = addAll(liDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] liAttributeArray = addAll(liDefaultAttributeArray, mdnGlobalAttributeArray);
 		// map
-		String[] mapAttributeArray = addAll(mapDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] mapAttributeArray = addAll(mapDefaultAttributeArray, mdnGlobalAttributeArray);
 		// meter
-		String[] meterAttributeArray = addAll(meterDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] meterAttributeArray = addAll(meterDefaultAttributeArray, mdnGlobalAttributeArray);
 		// ol
-		String[] olAttributeArray = addAll(olDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] olAttributeArray = addAll(olDefaultAttributeArray, mdnGlobalAttributeArray);
 		// optgroup
-		String[] optgroupAttributeArray = addAll(optgroupDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] optgroupAttributeArray = addAll(optgroupDefaultAttributeArray, mdnGlobalAttributeArray);
 		// option
-		String[] optionAttributeArray = addAll(optionDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] optionAttributeArray = addAll(optionDefaultAttributeArray, mdnGlobalAttributeArray);
 		// output
-		String[] outputAttributeArray = addAll(outputDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] outputAttributeArray = addAll(outputDefaultAttributeArray, mdnGlobalAttributeArray);
 		// p
-		String[] pAttributeArray = addAll(pDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] pAttributeArray = addAll(pDefaultAttributeArray, mdnGlobalAttributeArray);
 		// param
-		String[] paramAttributeArray = addAll(paramDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] paramAttributeArray = addAll(paramDefaultAttributeArray, mdnGlobalAttributeArray);
 		// pre
-		String[] preAttributeArray = addAll(preDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] preAttributeArray = addAll(preDefaultAttributeArray, mdnGlobalAttributeArray);
 		// progress
-		String[] progressAttributeArray = addAll(progressDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] progressAttributeArray = addAll(progressDefaultAttributeArray, mdnGlobalAttributeArray);
 		// q
-		String[] qAttributeArray = addAll(qDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] qAttributeArray = addAll(qDefaultAttributeArray, mdnGlobalAttributeArray);
 		// select
-		String[] selectAttributeArray = addAll(selectDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] selectAttributeArray = addAll(selectDefaultAttributeArray, mdnGlobalAttributeArray);
 		// source
-		String[] sourceAttributeArray = addAll(sourceDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] sourceAttributeArray = addAll(sourceDefaultAttributeArray, mdnGlobalAttributeArray);
 		// table
-		String[] tableAttributeArray = addAll(tableDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] tableAttributeArray = addAll(tableDefaultAttributeArray, mdnGlobalAttributeArray);
 		// tbody
-		String[] tbodyAttributeArray = addAll(tbodyDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] tbodyAttributeArray = addAll(tbodyDefaultAttributeArray, mdnGlobalAttributeArray);
 		// td
-		String[] tdAttributeArray = addAll(tdDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] tdAttributeArray = addAll(tdDefaultAttributeArray, mdnGlobalAttributeArray);
 		// textarea
-		String[] textareaAttributeArray = addAll(textareaDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] textareaAttributeArray = addAll(textareaDefaultAttributeArray, mdnGlobalAttributeArray);
 		// tfoot
-		String[] tfootAttributeArray = addAll(tfootDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] tfootAttributeArray = addAll(tfootDefaultAttributeArray, mdnGlobalAttributeArray);
 		// th
-		String[] thAttributeArray = addAll(thDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] thAttributeArray = addAll(thDefaultAttributeArray, mdnGlobalAttributeArray);
 		// thead
-		String[] theadAttributeArray = addAll(theadDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] theadAttributeArray = addAll(theadDefaultAttributeArray, mdnGlobalAttributeArray);
 		// time
-		String[] timeAttributeArray = addAll(timeDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] timeAttributeArray = addAll(timeDefaultAttributeArray, mdnGlobalAttributeArray);
 		// tr
-		String[] trAttributeArray = addAll(trDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] trAttributeArray = addAll(trDefaultAttributeArray, mdnGlobalAttributeArray);
 		// track
-		String[] trackAttributeArray = addAll(trackDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] trackAttributeArray = addAll(trackDefaultAttributeArray, mdnGlobalAttributeArray);
 		// ul
-		String[] ulAttributeArray = addAll(ulDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] ulAttributeArray = addAll(ulDefaultAttributeArray, mdnGlobalAttributeArray);
 		// video
-		String[] videoAttributeArray = addAll(videoDefaultAttributeArray, w3schoolsGlobalAttributeArray);
+		String[] videoAttributeArray = addAll(videoDefaultAttributeArray, mdnGlobalAttributeArray);
 
 		NAVER_DEFAULT_POLICY = new HtmlPolicyBuilder()
 
@@ -202,12 +202,13 @@ public class NaverHtmlPolicy {
 			.disallowAttributes("style").onElements("a")
 
 			.allowElements("abbr")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("abbr")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("abbr")
 
 			.allowElements("acronym")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("acronym")
 
 			.allowElements("adress")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("adress")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("adress")
 
 			.allowElements("applet")
 			.allowAttributes(appletDefaultAttributeArray).onElements("applet")
@@ -216,16 +217,16 @@ public class NaverHtmlPolicy {
 			.allowAttributes(areaAttributeArray).onElements("area")
 
 			.allowElements("article")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("article")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("article")
 
 			.allowElements("aside")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("aside")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("aside")
 
 			.allowElements("audio")
 			.allowAttributes(audioAttributeArray).onElements("audio")
 
 			.allowElements("b")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("b")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("b")
 
 			// base(exclude element)
 
@@ -233,10 +234,10 @@ public class NaverHtmlPolicy {
 			.allowAttributes(basefontDefaultAttributeArray).onElements("basefont")
 
 			.allowElements("bdi")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("bdi")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("bdi")
 
 			.allowElements("bdo")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("bdo")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("bdo")
 
 			.allowElements("big")
 
@@ -246,7 +247,7 @@ public class NaverHtmlPolicy {
 			// body(exclude element)
 
 			.allowElements("br")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("br")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("br")
 
 			.allowElements("button")
 			.allowAttributes(buttonAttributeArray).onElements("button")
@@ -260,10 +261,10 @@ public class NaverHtmlPolicy {
 			.allowElements("center")
 
 			.allowElements("cite")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("cite")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("cite")
 
 			.allowElements("code")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("code")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("code")
 
 			.allowElements("col")
 			.allowAttributes(colAttributeArray).onElements("col")
@@ -277,10 +278,10 @@ public class NaverHtmlPolicy {
 			// data element(exclude element)
 
 			.allowElements("datalist")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("datalist")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("datalist")
 
 			.allowElements("dd")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("dd")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("dd")
 
 			.allowElements("del")
 			.allowAttributes(delAttributeArray).onElements("del")
@@ -289,7 +290,7 @@ public class NaverHtmlPolicy {
 			.allowAttributes(detailsAttributeArray).onElements("details")
 
 			.allowElements("dfn")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("dfn")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("dfn")
 
 			// dialog(exclude element)
 
@@ -300,13 +301,13 @@ public class NaverHtmlPolicy {
 			.allowAttributes(divAttributeArray).onElements("div")
 
 			.allowElements("dl")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("dl")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("dl")
 
 			.allowElements("dt")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("dt")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("dt")
 
 			.allowElements("em")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("em")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("em")
 
 			// embed(exclude element)
 
@@ -314,16 +315,16 @@ public class NaverHtmlPolicy {
 			.allowAttributes(fieldsetAttributeArray).onElements("fieldset")
 
 			.allowElements("figcaption")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("figcaption")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("figcaption")
 
 			.allowElements("figure")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("figure")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("figure")
 
 			.allowElements("font")
 			.allowAttributes(fontDefaultAttributeArray).onElements("font")
 
 			.allowElements("footer")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("footer")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("footer")
 
 			.allowElements("form")
 			.allowAttributes(formAttributeArray).onElements("form")
@@ -341,19 +342,19 @@ public class NaverHtmlPolicy {
 			.allowAttributes(headAttributeArray).onElements("head")
 
 			.allowElements("header")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("header")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("header")
 
 			.allowElements("hgroup")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("hgroup")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("hgroup")
 
 			.allowElements("hr")
 			.allowAttributes(hrAttributeArray).onElements("hr")
 
 			.allowElements("html") // xmlns(exclude attribute)
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("html")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("html")
 
 			.allowElements("i")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("i")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("i")
 
 			// iframe(exclude element)
 
@@ -370,7 +371,7 @@ public class NaverHtmlPolicy {
 			.allowAttributes(isindexDefaultAttributeArray).onElements("isindex")
 
 			.allowElements("kbd")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("kbd")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("kbd")
 
 			.allowElements("keygen")
 			.allowAttributes(keygenAttributeArray).onElements("keygen")
@@ -397,7 +398,7 @@ public class NaverHtmlPolicy {
 			.allowAttributes(menuDefaultAttributeArray).onElements("menu")
 
 			.allowElements("mark")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("mark")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("mark")
 
 			// meta(exclude element)
 
@@ -407,12 +408,12 @@ public class NaverHtmlPolicy {
 			.allowAttributes(meterAttributeArray).onElements("meter")
 
 			.allowElements("nav")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("nav")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("nav")
 
 			.allowElements("noframes")
 
 			.allowElements("noscript")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("noscript")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("noscript")
 
 			// object(exclude element)
 
@@ -446,52 +447,52 @@ public class NaverHtmlPolicy {
 			.allowAttributes(qAttributeArray).onElements("q")
 
 			.allowElements("rp")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("rp")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("rp")
 
 			.allowElements("rt")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("rt")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("rt")
 
 			.allowElements("ruby")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("ruby")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("ruby")
 
 			.allowElements("s")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("s")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("s")
 
 			.allowElements("samp")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("samp")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("samp")
 
 			// script(exclude element)
 
 			.allowElements("section")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("section")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("section")
 
 			.allowElements("select")
 			.allowAttributes(selectAttributeArray).onElements("select")
 
 			.allowElements("small")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("small")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("small")
 
 			.allowElements("source")
 			.allowAttributes(sourceAttributeArray).onElements("source")
 
 			.allowElements("span")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("span")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("span")
 
 			.allowElements("strike")
 
 			.allowElements("strong")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("strong")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("strong")
 
 			// style(exclude element)
 
 			.allowElements("sub")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("sub")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("sub")
 
 			.allowElements("summary")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("summary")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("summary")
 
 			.allowElements("sup")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("sup")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("sup")
 
 			// svg(exclude element)
 
@@ -522,7 +523,7 @@ public class NaverHtmlPolicy {
 			.allowAttributes(timeAttributeArray).onElements("time")
 
 			.allowElements("title")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("title")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("title")
 
 			.allowElements("tr")
 			.allowAttributes(trAttributeArray).onElements("tr")
@@ -533,24 +534,25 @@ public class NaverHtmlPolicy {
 			.allowElements("tt")
 
 			.allowElements("u")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("u")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("u")
 
 			.allowElements("ul")
 			.allowAttributes(ulAttributeArray).onElements("ul")
 
 			.allowElements("var")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("var")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("var")
 
 			.allowElements("video")
 			.allowAttributes(videoAttributeArray).onElements("video")
 
 			.allowElements("wbr")
-			.allowAttributes(w3schoolsGlobalAttributeArray).onElements("wbr")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("wbr")
 
 			.allowUrlProtocols("https", "http")
 			.toFactory();
 	}
 
+	// todo
 	public static PolicyFactory getDefaultPolicy() {
 		if (instance == null) {
 			instance = new NaverHtmlPolicy();
@@ -564,6 +566,7 @@ public class NaverHtmlPolicy {
 	}
 
 
+	// todo check array add
 	private static String[] addAll(String[] array1, String[] array2) {
 		String[] tempArr = new String[array1.length + array2.length];
 		System.arraycopy(array1, 0, tempArr, 0, array1.length);
