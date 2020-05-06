@@ -1,5 +1,8 @@
 package org.owasp.html;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.naver.NaverHtmlPolicy;
@@ -46,6 +49,20 @@ public class NaverPolicyTest {
 				.toFactory());
 
 //		getExpandPolicy.sanitize()
+	}
+
+	@Test
+	public void testadf() {
+		String[] ss = {"hi", "ybs", "qq"};
+		List<String> list = Arrays.asList("1", "2", "3");
+//		vara(ss);
+		vara((String[])list.toArray());
+	}
+
+	public void vara(String... stringArray) {
+
+		for (String s : stringArray)
+			System.out.println(s);
 	}
 
 	private static String[] addAll(String[] array1, String[] array2) {

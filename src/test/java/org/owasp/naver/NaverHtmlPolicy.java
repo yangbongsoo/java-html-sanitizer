@@ -13,21 +13,40 @@ public class NaverHtmlPolicy {
 
 	// MDN doesn't have media attribute (but w3schools have)
 	private String[] aDefaultAttributeArray = {"charset", "coords", "href", "hreflang", "media", "name", "rel", "rev", "shape", "target", "type"};
-	private String[] appletDefaultAttributeArray = {"code", "object", "align", "alt", "archive", "codebase", "height", "hspace", "name", "vspace", "width"};
 
-	// exclude attribute : download
-	private String[] areaDefaultAttributeArray = {"alt", "coords", "href", "hreflang", "media", "nohref", "rel", "shape", "target", "type"};
+	// exclude attribute : datafld, datasrc, mayscript
+	private String[] appletDefaultAttributeArray = {"code", "object", "align", "alt", "archive", "codebase", "height", "hspace", "name", "vspace", "width", "src"};
+
+	// exclude attribute : download, ping, referrerpolicy
+	private String[] areaDefaultAttributeArray = {"alt", "coords", "href", "hreflang", "media", "nohref", "rel", "shape", "target", "type", "name", "tabindex"};
+
+	// exclude attribute : crossorigin, currentTime, disableRemotePlayback, duration
 	private String[] audioDefaultAttributeArray = {"autoplay", "controls", "loop", "muted", "preload", "src"};
+
+	// base(exclude element)
+
 	private String[] basefontDefaultAttributeArray = {"color", "face", "size"};
 	private String[] blockquoteDefaultAttributeArray = {"cite"};
 
+	// body(exclude element)
+
 	// exclude attribute : formaction
-	private String[] buttonDefaultAttributeArray = {"autofocus", "disabled", "form", "formenctype", "formmethod", "formnovalidate", "formtarget", "name", "type", "value"};
+	private String[] buttonDefaultAttributeArray = {"autofocus", "disabled", "form", "formenctype", "formmethod", "formnovalidate", "formtarget", "name", "type", "value", "autocomplete"};
+
+	// exclude attribute : moz-opaque
 	private String[] canvasDefaultAttributeArray = {"height", "width"};
 	private String[] captionDefaultAttributeArray = {"align"};
-	private String[] colDefaultAttributeArray = {"align", "char", "charoff", "span", "valign", "width"};
-	private String[] colgroupDefaultAttributeArray = {"align", "char", "charoff", "span", "valign", "width"};
-	private String[] commandDefaultAttributeArray = {"type"};
+
+	// center(center element don't include any attribute. but not exclude element)
+	// cite(cite element only include global attributes)
+	// code(code element only include global attributes)
+
+	private String[] colDefaultAttributeArray = {"align", "char", "charoff", "span", "valign", "width", "bgcolor"};
+	private String[] colgroupDefaultAttributeArray = {"align", "char", "charoff", "span", "valign", "bgcolor"};
+	private String[] commandDefaultAttributeArray = {"checked", "disabled", "icon", "label", "radiogroup", "type"};
+
+	// data(exclude element)
+
 	private String[] delDefaultAttributeArray = {"cite", "datetime"};
 	private String[] detailsDefaultAttributeArray = {"open"};
 	private String[] dirDefaultAttributeArray = {"compact"};
@@ -101,6 +120,8 @@ public class NaverHtmlPolicy {
 		String[] areaAttributeArray = addAll(areaDefaultAttributeArray, mdnGlobalAttributeArray);
 		// audio
 		String[] audioAttributeArray = addAll(audioDefaultAttributeArray, mdnGlobalAttributeArray);
+		// basefont
+		String[] basefontAttributeArray = addAll(basefontDefaultAttributeArray, mdnGlobalAttributeArray);
 		// blockquote
 		String[] blockquoteAttributeArray = addAll(blockquoteDefaultAttributeArray, mdnGlobalAttributeArray);
 		// button
@@ -113,6 +134,8 @@ public class NaverHtmlPolicy {
 		String[] colAttributeArray = addAll(colDefaultAttributeArray, mdnGlobalAttributeArray);
 		// colgroup
 		String[] colgroupAttributeArray = addAll(colgroupDefaultAttributeArray, mdnGlobalAttributeArray);
+		// command
+		String[] commandAttributeArray = addAll(commandDefaultAttributeArray, mdnGlobalAttributeArray);
 		// del
 		String[] delAttributeArray = addAll(delDefaultAttributeArray, mdnGlobalAttributeArray);
 		// details
@@ -207,8 +230,8 @@ public class NaverHtmlPolicy {
 			.allowElements("acronym")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("acronym")
 
-			.allowElements("adress")
-			.allowAttributes(mdnGlobalAttributeArray).onElements("adress")
+			.allowElements("address")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("address")
 
 			.allowElements("applet")
 			.allowAttributes(appletDefaultAttributeArray).onElements("applet")
@@ -228,10 +251,8 @@ public class NaverHtmlPolicy {
 			.allowElements("b")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("b")
 
-			// base(exclude element)
-
 			.allowElements("basefont")
-			.allowAttributes(basefontDefaultAttributeArray).onElements("basefont")
+			.allowAttributes(basefontAttributeArray).onElements("basefont")
 
 			.allowElements("bdi")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("bdi")
@@ -240,11 +261,10 @@ public class NaverHtmlPolicy {
 			.allowAttributes(mdnGlobalAttributeArray).onElements("bdo")
 
 			.allowElements("big")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("big")
 
 			.allowElements("blockquote")
 			.allowAttributes(blockquoteAttributeArray).onElements("blockquote")
-
-			// body(exclude element)
 
 			.allowElements("br")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("br")
@@ -273,9 +293,7 @@ public class NaverHtmlPolicy {
 			.allowAttributes(colgroupAttributeArray).onElements("colgroup")
 
 			.allowElements("command")
-			.allowAttributes(commandDefaultAttributeArray).onElements("command")
-
-			// data element(exclude element)
+			.allowAttributes(commandAttributeArray).onElements("command")
 
 			.allowElements("datalist")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("datalist")
