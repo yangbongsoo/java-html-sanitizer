@@ -5,78 +5,134 @@ import org.owasp.html.PolicyFactory;
 
 public class NaverHtmlPolicy {
 
-	// exclude attribute : translate, contenteditable, data-*, draggable, dropzone, spellcheck
-//	private String[] w3schoolsGlobalAttributeArray = {"accesskey", "class", "dir", "hidden", "id", "lang", "tabindex", "title", "style"};
+	// todo check element
+	//	<element name="body" disable="true" /> <!-- <BODY ONLOAD=alert("XSS")>, <BODY BACKGROUND="javascript:alert('XSS')"> -->
+	//	<element name="embed" disable="true" />
+	//	<element name="iframe" disable="true" /> <!-- <IFRAME SRC=”http://hacker-site.com/xss.html”> -->
+	//	<element name="meta" disable="true" />
+	//	<element name="object" disable="true" />
+	//	<element name="script" disable="true" /> <!-- <SCRIPT> alert(“XSS”); </SCRIPT> -->
+	//	<element name="style" disable="true" />
+	//	<element name="link" disable="true" />
+	//	<element name="base" disable="true" />
 
-	// exclude attribute : autocapitalize contenteditable contextmenu data-* draggable dropzone inputmode is itemid itemprop itemref itemscope itemtype part slot spellcheck translate
-	private String[] mdnGlobalAttributeArray = {"accesskey", "class", "dir", "exportparts", "hidden", "id", "lang", "style", "tabindex", "title"};
+	// todo global attribute duplicate check
+	private String[] mdnGlobalAttributeArray = {"accesskey", "class", "dir", "exportparts", "hidden", "id", "lang", "style", "tabindex", "title"}; // exclude attribute : autocapitalize contenteditable contextmenu data-* draggable dropzone inputmode is itemid itemprop itemref itemscope itemtype part slot spellcheck translate
 
-	// MDN doesn't have media attribute (but w3schools have)
+	// todo MDN doesn't have media attribute (but w3schools have)
 	private String[] aDefaultAttributeArray = {"charset", "coords", "href", "hreflang", "media", "name", "rel", "rev", "shape", "target", "type"};
 
-	// exclude attribute : datafld, datasrc, mayscript
-	private String[] appletDefaultAttributeArray = {"code", "object", "align", "alt", "archive", "codebase", "height", "hspace", "name", "vspace", "width", "src"};
+	// abbr(only include global attributes)
+	// acronym(only include global attributes)
+	// address(only include global attributes)
 
-	// exclude attribute : download, ping, referrerpolicy
-	private String[] areaDefaultAttributeArray = {"alt", "coords", "href", "hreflang", "media", "nohref", "rel", "shape", "target", "type", "name", "tabindex"};
+	private String[] appletDefaultAttributeArray = {"code", "object", "align", "alt", "archive", "codebase", "height", "hspace", "name", "vspace", "width", "src"}; // exclude attribute : datafld, datasrc, mayscript
+	private String[] areaDefaultAttributeArray = {"alt", "coords", "href", "hreflang", "media", "nohref", "rel", "shape", "target", "type", "name", "tabindex"}; // exclude attribute : download, ping, referrerpolicy
 
-	// exclude attribute : crossorigin, currentTime, disableRemotePlayback, duration
-	private String[] audioDefaultAttributeArray = {"autoplay", "controls", "loop", "muted", "preload", "src"};
+	// article(only include global attributes)
+	// aside(only include global attributes)
 
+	private String[] audioDefaultAttributeArray = {"autoplay", "controls", "loop", "muted", "preload", "src"}; // exclude attribute : crossorigin, currentTime, disableRemotePlayback, duration
+
+	// b(only include global attributes)
 	// base(exclude element)
 
 	private String[] basefontDefaultAttributeArray = {"color", "face", "size"};
+
+	// bdi(only include global attributes)
+	// bdo(only include global attributes)
+	// big(only include global attributes)
+
 	private String[] blockquoteDefaultAttributeArray = {"cite"};
 
 	// body(exclude element)
+	// br(only include global attributes)
 
-	// exclude attribute : formaction
-	private String[] buttonDefaultAttributeArray = {"autofocus", "disabled", "form", "formenctype", "formmethod", "formnovalidate", "formtarget", "name", "type", "value", "autocomplete"};
-
-	// exclude attribute : moz-opaque
-	private String[] canvasDefaultAttributeArray = {"height", "width"};
+	private String[] buttonDefaultAttributeArray = {"autofocus", "disabled", "form", "formenctype", "formmethod", "formnovalidate", "formtarget", "name", "type", "value", "autocomplete"}; // exclude attribute : formaction
+	private String[] canvasDefaultAttributeArray = {"height", "width"}; // exclude attribute : moz-opaque
 	private String[] captionDefaultAttributeArray = {"align"};
 
-	// center(center element don't include any attribute. but not exclude element)
-	// cite(cite element only include global attributes)
-	// code(code element only include global attributes)
+	// center(don't include any attribute. but not exclude element)
+	// cite(only include global attributes)
+	// code(only include global attributes)
 
 	private String[] colDefaultAttributeArray = {"align", "char", "charoff", "span", "valign", "width", "bgcolor"};
 	private String[] colgroupDefaultAttributeArray = {"align", "char", "charoff", "span", "valign", "bgcolor"};
 	private String[] commandDefaultAttributeArray = {"checked", "disabled", "icon", "label", "radiogroup", "type"};
 
 	// data(exclude element)
+	// datalist(only include global attributes)
 
+	private String[] ddDefaultAttributeArray = {"nowrap"};
 	private String[] delDefaultAttributeArray = {"cite", "datetime"};
 	private String[] detailsDefaultAttributeArray = {"open"};
+
+	// dfn(only include global attributes)
+	// dialog(exclude element)
+
 	private String[] dirDefaultAttributeArray = {"compact"};
-	private String[] divDefaultAttributeArray = {"align"};
+
+	// div(only include global attributes)
+	// dl(only include global attributes)
+	// dt(only include global attributes)
+	// em(only include global attributes)
+	// embed(exclude element)
+
 	private String[] fieldsetDefaultAttributeArray = {"disabled", "form", "name"};
+
+	// figcaption(only include global attributes)
+	// figure(only include global attributes)
+
 	private String[] fontDefaultAttributeArray = {"color", "face", "size"};
-	private String[] formDefaultAttributeArray = {"accept", "accept-charset", "action", "autocomplete", "enctype", "method", "name", "novalidate", "target"};
-	private String[] frameDefaultAttributeArray = {"frameborder", "longdesc", "marginheight", "marginwidth", "name", "noresize", "scrolling", "src"};
+
+	// footer(only include global attributes)
+
+	private String[] formDefaultAttributeArray = {"accept", "accept-charset", "action", "autocomplete", "enctype", "method", "name", "novalidate", "target", "rel"}; // exclude attribute : autocapitalize
+	private String[] frameDefaultAttributeArray = {"frameborder", "marginheight", "marginwidth", "name", "noresize", "scrolling", "src"};
 	private String[] framesetDefaultAttributeArray = {"cols", "rows"};
-	private String[] h1Toh6DefaultAttributeArray = {"align"};
+
+	// h1-h6(only include global attributes)
+
 	private String[] headDefaultAttributeArray = {"profile"};
-	private String[] hrDefaultAttributeArray = {"align", "noshade", "size", "width"};
 
-	// exclude attribute : crossorigin, srcset
-	private String[] imgDefaultAttributeArray = {"align", "alt", "border", "height", "hspace", "ismap", "longdesc", "sizes", "src", "usemap", "vspace", "width"};
+	// header(only include global attributes)
+	// hgroup(only include global attributes)
 
-	// exclude attribute : dirname, formaction
-	private String[] inputDefaultAttributeArray = {"accept", "align", "alt", "autocomplete", "autofocus", "checked", "disabled", "form", "formenctype", "formmethod",
+	private String[] hrDefaultAttributeArray = {"align", "noshade", "size", "width", "color"};
+	private String[] htmlDefaultAttributeArray = {"manifest", "version"}; // exclude attribute : xmlns
+
+	// i(only include global attributes)
+	// iframe(exclude element)
+
+	private String[] imgDefaultAttributeArray = {"align", "alt", "border", "height", "hspace", "ismap", "longdesc", "sizes", "src", "usemap", "vspace", "width", "name"}; // exclude attribute : crossorigin, srcset, decoding, importance, intrinsicsize, loading, referrerpolicy
+	private String[] inputDefaultAttributeArray = {"accept", "alt", "autocomplete", "autofocus", "checked", "disabled", "form", "formenctype", "formmethod",
 		"formnovalidate", "formtarget", "height", "list", "max", "maxlength", "min", "multiple", "name", "pattern", "placeholder", "readonly", "required", "size",
-		"src", "step", "type", "value", "width"};
-
+		"src", "step", "type", "value", "width"}; // exclude attribute : dirname, formaction, capture, inputmode, minlength, autocorrect, incremental, mozactionhint, orient, results, webkitdirectory
 	private String[] insDefaultAttributeArray = {"cite", "datetime"};
 	private String[] isindexDefaultAttributeArray = {"action", "prompt"};
+
+	// kbd(only include global attributes)
+
 	private String[] keygenDefaultAttributeArray = {"autofocus", "challenge", "disabled", "form", "keytype", "name"};
 	private String[] labelDefaultAttributeArray = {"for", "form"};
-	private String[] legendDefaultAttributeArray = {"align"};
+
+	// legend(only include global attributes)
+
 	private String[] liDefaultAttributeArray = {"type", "value"};
+
+	// link(exclude element)
+	// main(exclude element)
+
 	private String[] mapDefaultAttributeArray = {"name"};
-	private String[] marqueeDefaultAttributeArray = {"width", "height", "direction", "behavior", "scrolldelay", "scrollamount", "bgcolor", "hspace", "vspace", "loop"};
-	private String[] menuDefaultAttributeArray = {"type", "id"};
+	private String[] marqueeDefaultAttributeArray = {"width", "height", "direction", "behavior", "scrolldelay", "scrollamount", "bgcolor", "hspace", "vspace", "loop"}; // exclude attribute : truespeed
+	private String[] menuDefaultAttributeArray = {"type", "label"};
+
+	// mark(only include global attributes)
+
+	// meta(exclude element)
+	// nobr(exclude element) https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nobr
+
+
 	private String[] meterDefaultAttributeArray = {"form", "high", "low", "max", "min", "optimum", "value"};
 
 	// exclude attribute : reversed
@@ -136,38 +192,48 @@ public class NaverHtmlPolicy {
 		String[] colgroupAttributeArray = addAll(colgroupDefaultAttributeArray, mdnGlobalAttributeArray);
 		// command
 		String[] commandAttributeArray = addAll(commandDefaultAttributeArray, mdnGlobalAttributeArray);
+		// dd
+		String[] ddAttributeArray = addAll(ddDefaultAttributeArray, mdnGlobalAttributeArray);
 		// del
 		String[] delAttributeArray = addAll(delDefaultAttributeArray, mdnGlobalAttributeArray);
 		// details
 		String[] detailsAttributeArray = addAll(detailsDefaultAttributeArray, mdnGlobalAttributeArray);
-		// div
-		String[] divAttributeArray = addAll(divDefaultAttributeArray, mdnGlobalAttributeArray);
+		// dir
+		String[] dirAttributeArray = addAll(dirDefaultAttributeArray, mdnGlobalAttributeArray);
 		// fieldset
 		String[] fieldsetAttributeArray = addAll(fieldsetDefaultAttributeArray, mdnGlobalAttributeArray);
+		// font
+		String[] fontAttributeArray = addAll(fontDefaultAttributeArray, mdnGlobalAttributeArray);
 		// form
 		String[] formAttributeArray = addAll(formDefaultAttributeArray, mdnGlobalAttributeArray);
-		// h1 - h6
-		String[] h1Toh6AttributeArray = addAll(h1Toh6DefaultAttributeArray, mdnGlobalAttributeArray);
+		// frame
+		String[] frameAttributeArray = addAll(frameDefaultAttributeArray, mdnGlobalAttributeArray);
+		// frameset
+		String[] framesetAttributeArray = addAll(framesetDefaultAttributeArray, mdnGlobalAttributeArray);
 		// head
 		String[] headAttributeArray = addAll(headDefaultAttributeArray, mdnGlobalAttributeArray);
 		// hr
 		String[] hrAttributeArray = addAll(hrDefaultAttributeArray, mdnGlobalAttributeArray);
+		// html
+		String[] htmlAttributeArray = addAll(htmlDefaultAttributeArray, mdnGlobalAttributeArray);
 		// img
 		String[] imgAttributeArray = addAll(imgDefaultAttributeArray, mdnGlobalAttributeArray);
 		// input
 		String[] inputAttributeArray = addAll(inputDefaultAttributeArray, mdnGlobalAttributeArray);
 		// ins
 		String[] insAttributeArray = addAll(insDefaultAttributeArray, mdnGlobalAttributeArray);
+		// isindex
+		String[] isindexAttributeArray = addAll(isindexDefaultAttributeArray, mdnGlobalAttributeArray);
 		// keygen
 		String[] keygenAttributeArray = addAll(keygenDefaultAttributeArray, mdnGlobalAttributeArray);
 		// label
 		String[] labelAttributeArray = addAll(labelDefaultAttributeArray, mdnGlobalAttributeArray);
-		// legend
-		String[] legendAttributeArray = addAll(legendDefaultAttributeArray, mdnGlobalAttributeArray);
 		// li
 		String[] liAttributeArray = addAll(liDefaultAttributeArray, mdnGlobalAttributeArray);
 		// map
 		String[] mapAttributeArray = addAll(mapDefaultAttributeArray, mdnGlobalAttributeArray);
+		// menu
+		String[] menuAttributeArray = addAll(menuDefaultAttributeArray, mdnGlobalAttributeArray);
 		// meter
 		String[] meterAttributeArray = addAll(meterDefaultAttributeArray, mdnGlobalAttributeArray);
 		// ol
@@ -299,7 +365,7 @@ public class NaverHtmlPolicy {
 			.allowAttributes(mdnGlobalAttributeArray).onElements("datalist")
 
 			.allowElements("dd")
-			.allowAttributes(mdnGlobalAttributeArray).onElements("dd")
+			.allowAttributes(ddAttributeArray).onElements("dd")
 
 			.allowElements("del")
 			.allowAttributes(delAttributeArray).onElements("del")
@@ -310,13 +376,11 @@ public class NaverHtmlPolicy {
 			.allowElements("dfn")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("dfn")
 
-			// dialog(exclude element)
-
 			.allowElements("dir")
-			.allowAttributes(dirDefaultAttributeArray).onElements("dir")
+			.allowAttributes(dirAttributeArray).onElements("dir")
 
 			.allowElements("div")
-			.allowAttributes(divAttributeArray).onElements("div")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("div")
 
 			.allowElements("dl")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("dl")
@@ -326,8 +390,6 @@ public class NaverHtmlPolicy {
 
 			.allowElements("em")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("em")
-
-			// embed(exclude element)
 
 			.allowElements("fieldset")
 			.allowAttributes(fieldsetAttributeArray).onElements("fieldset")
@@ -339,7 +401,7 @@ public class NaverHtmlPolicy {
 			.allowAttributes(mdnGlobalAttributeArray).onElements("figure")
 
 			.allowElements("font")
-			.allowAttributes(fontDefaultAttributeArray).onElements("font")
+			.allowAttributes(fontAttributeArray).onElements("font")
 
 			.allowElements("footer")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("footer")
@@ -348,13 +410,13 @@ public class NaverHtmlPolicy {
 			.allowAttributes(formAttributeArray).onElements("form")
 
 			.allowElements("frame")
-			.allowAttributes(frameDefaultAttributeArray).onElements("frame")
+			.allowAttributes(frameAttributeArray).onElements("frame")
 
 			.allowElements("frameset")
-			.allowAttributes(framesetDefaultAttributeArray).onElements("frameset")
+			.allowAttributes(framesetAttributeArray).onElements("frameset")
 
 			.allowElements("h1", "h2", "h3", "h4", "h5", "h6")
-			.allowAttributes(h1Toh6AttributeArray).onElements("h1", "h2", "h3", "h4", "h5", "h6")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("h1", "h2", "h3", "h4", "h5", "h6")
 
 			.allowElements("head")
 			.allowAttributes(headAttributeArray).onElements("head")
@@ -368,13 +430,11 @@ public class NaverHtmlPolicy {
 			.allowElements("hr")
 			.allowAttributes(hrAttributeArray).onElements("hr")
 
-			.allowElements("html") // xmlns(exclude attribute)
-			.allowAttributes(mdnGlobalAttributeArray).onElements("html")
+			.allowElements("html")
+			.allowAttributes(htmlAttributeArray).onElements("html")
 
 			.allowElements("i")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("i")
-
-			// iframe(exclude element)
 
 			.allowElements("img")
 			.allowAttributes(imgAttributeArray).onElements("img")
@@ -386,7 +446,7 @@ public class NaverHtmlPolicy {
 			.allowAttributes(insAttributeArray).onElements("ins")
 
 			.allowElements("isindex")
-			.allowAttributes(isindexDefaultAttributeArray).onElements("isindex")
+			.allowAttributes(isindexAttributeArray).onElements("isindex")
 
 			.allowElements("kbd")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("kbd")
@@ -398,13 +458,10 @@ public class NaverHtmlPolicy {
 			.allowAttributes(labelAttributeArray).onElements("label")
 
 			.allowElements("legend")
-			.allowAttributes(legendAttributeArray).onElements("legend")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("legend")
 
 			.allowElements("li")
 			.allowAttributes(liAttributeArray).onElements("li")
-
-			// link(exclude element)
-			// main(exclude element)
 
 			.allowElements("map")
 			.allowAttributes(mapAttributeArray).onElements("map")
@@ -413,14 +470,10 @@ public class NaverHtmlPolicy {
 			.allowAttributes(marqueeDefaultAttributeArray).onElements("marquee")
 
 			.allowElements("menu")
-			.allowAttributes(menuDefaultAttributeArray).onElements("menu")
+			.allowAttributes(menuAttributeArray).onElements("menu")
 
 			.allowElements("mark")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("mark")
-
-			// meta(exclude element)
-
-			// nobr(exclude element) https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nobr
 
 			.allowElements("meter")
 			.allowAttributes(meterAttributeArray).onElements("meter")
