@@ -5,29 +5,15 @@ import org.owasp.html.PolicyFactory;
 
 public class NaverHtmlPolicy {
 
-	// todo check element
-	//	<element name="body" disable="true" /> <!-- <BODY ONLOAD=alert("XSS")>, <BODY BACKGROUND="javascript:alert('XSS')"> -->
-	//	<element name="embed" disable="true" />
-	//	<element name="iframe" disable="true" /> <!-- <IFRAME SRC=”http://hacker-site.com/xss.html”> -->
-	//	<element name="meta" disable="true" />
-	//	<element name="object" disable="true" />
-	//	<element name="script" disable="true" /> <!-- <SCRIPT> alert(“XSS”); </SCRIPT> -->
-	//	<element name="style" disable="true" />
-	//	<element name="link" disable="true" />
-	//	<element name="base" disable="true" />
-
-	// todo global attribute duplicate check
 	private String[] mdnGlobalAttributeArray = {"accesskey", "class", "dir", "exportparts", "hidden", "id", "lang", "style", "tabindex", "title"}; // exclude attribute : autocapitalize contenteditable contextmenu data-* draggable dropzone inputmode is itemid itemprop itemref itemscope itemtype part slot spellcheck translate
-
-	// todo MDN doesn't have media attribute (but w3schools have)
-	private String[] aDefaultAttributeArray = {"charset", "coords", "href", "hreflang", "media", "name", "rel", "rev", "shape", "target", "type"};
+	private String[] aDefaultAttributeArray = {"charset", "coords", "href", "hreflang", "name", "rel", "rev", "shape", "target", "type"}; // exclude attribute : media
 
 	// abbr(only include global attributes)
 	// acronym(only include global attributes)
 	// address(only include global attributes)
 
 	private String[] appletDefaultAttributeArray = {"code", "object", "align", "alt", "archive", "codebase", "height", "hspace", "name", "vspace", "width", "src"}; // exclude attribute : datafld, datasrc, mayscript
-	private String[] areaDefaultAttributeArray = {"alt", "coords", "href", "hreflang", "media", "nohref", "rel", "shape", "target", "type", "name", "tabindex"}; // exclude attribute : download, ping, referrerpolicy
+	private String[] areaDefaultAttributeArray = {"alt", "coords", "href", "hreflang", "nohref", "rel", "shape", "target", "type", "name", "tabindex"}; // exclude attribute : download, ping, referrerpolicy, media
 
 	// article(only include global attributes)
 	// aside(only include global attributes)
@@ -40,8 +26,12 @@ public class NaverHtmlPolicy {
 	private String[] basefontDefaultAttributeArray = {"color", "face", "size"};
 
 	// bdi(only include global attributes)
-	// bdo(only include global attributes)
+
+	private String[] bdoDefaultAttributeArray = {"dir"};
+
+	// bgsound(exclude element)
 	// big(only include global attributes)
+	// blink(exclude element)
 
 	private String[] blockquoteDefaultAttributeArray = {"cite"};
 
@@ -58,6 +48,9 @@ public class NaverHtmlPolicy {
 
 	private String[] colDefaultAttributeArray = {"align", "char", "charoff", "span", "valign", "width", "bgcolor"};
 	private String[] colgroupDefaultAttributeArray = {"align", "char", "charoff", "span", "valign", "bgcolor"};
+
+	// content(exclude element)
+
 	private String[] commandDefaultAttributeArray = {"checked", "disabled", "icon", "label", "radiogroup", "type"};
 
 	// data(exclude element)
@@ -107,7 +100,7 @@ public class NaverHtmlPolicy {
 	private String[] imgDefaultAttributeArray = {"align", "alt", "border", "height", "hspace", "ismap", "longdesc", "sizes", "src", "usemap", "vspace", "width", "name"}; // exclude attribute : crossorigin, srcset, decoding, importance, intrinsicsize, loading, referrerpolicy
 	private String[] inputDefaultAttributeArray = {"accept", "alt", "autocomplete", "autofocus", "checked", "disabled", "form", "formenctype", "formmethod",
 		"formnovalidate", "formtarget", "height", "list", "max", "maxlength", "min", "multiple", "name", "pattern", "placeholder", "readonly", "required", "size",
-		"src", "step", "type", "value", "width"}; // exclude attribute : dirname, formaction, capture, inputmode, minlength, autocorrect, incremental, mozactionhint, orient, results, webkitdirectory
+		"src", "step", "type", "value", "width", "tabindex", "title"}; // exclude attribute : dirname, formaction, capture, inputmode, minlength, autocorrect, incremental, mozactionhint, orient, results, webkitdirectory
 	private String[] insDefaultAttributeArray = {"cite", "datetime"};
 	private String[] isindexDefaultAttributeArray = {"action", "prompt"};
 
@@ -121,50 +114,98 @@ public class NaverHtmlPolicy {
 	private String[] liDefaultAttributeArray = {"type", "value"};
 
 	// link(exclude element)
+	// listing(exclude element)
 	// main(exclude element)
 
 	private String[] mapDefaultAttributeArray = {"name"};
-	private String[] marqueeDefaultAttributeArray = {"width", "height", "direction", "behavior", "scrolldelay", "scrollamount", "bgcolor", "hspace", "vspace", "loop"}; // exclude attribute : truespeed
-	private String[] menuDefaultAttributeArray = {"type", "label"};
 
 	// mark(only include global attributes)
 
-	// meta(exclude element)
-	// nobr(exclude element) https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nobr
+	private String[] marqueeDefaultAttributeArray = {"width", "height", "direction", "behavior", "scrolldelay", "scrollamount", "bgcolor", "hspace", "vspace", "loop"}; // exclude attribute : truespeed
+	private String[] menuDefaultAttributeArray = {"type", "label"};
 
+	// menuitem(exclude element)
+	// meta(exclude element)
 
 	private String[] meterDefaultAttributeArray = {"form", "high", "low", "max", "min", "optimum", "value"};
 
-	// exclude attribute : reversed
-	private String[] olDefaultAttributeArray = {"compact", "start", "type"};
+	// nav(only include global attributes)
+	// nobr(don't include any attribute. but not exclude element)
+	// noframes(only include global attributes)
+	// noscript(only include global attributes)
+	// object(exclude element)
+
+	private String[] olDefaultAttributeArray = {"start", "type"}; // exclude attribute : reversed
 	private String[] optgroupDefaultAttributeArray = {"disabled", "label"};
 	private String[] optionDefaultAttributeArray = {"disabled", "label", "selected", "value"};
 	private String[] outputDefaultAttributeArray = {"for", "form", "name"};
-	private String[] pDefaultAttributeArray = {"align"};
+
+	// p(only include global attributes)
+
 	private String[] paramDefaultAttributeArray = {"name", "type", "value", "valuetype"};
-	private String[] preDefaultAttributeArray = {"width"};
+
+	// picture(exclude element)
+	// plaintext(exclude element)
+
+	private String[] preDefaultAttributeArray = {"width", "cols", "wrap"};
 	private String[] progressDefaultAttributeArray = {"max", "value"};
 	private String[] qDefaultAttributeArray = {"cite"};
-	private String[] selectDefaultAttributeArray = {"autofocus", "disabled", "form", "multiple", "name", "required", "size"};
 
-	// exclude attribute : srcset
-	private String[] sourceDefaultAttributeArray = {"src", "media", "sizes", "type"};
+	// rp(only include global attributes)
+	// rt(only include global attributes)
+	// rtc(exclude element)
+	// ruby(only include global attributes)
+	// s(only include global attributes)
+	// samp(only include global attributes)
+	// script(exclude element)
+	// section(only include global attributes)
+
+	private String[] selectDefaultAttributeArray = {"autofocus", "disabled", "form", "multiple", "name", "required", "size", "autocomplete"};
+
+	// shadow(exclude element)
+	// slot(exclude element)
+	// small(only include global attributes)
+
+	private String[] sourceDefaultAttributeArray = {"src", "media", "sizes", "type"}; // exclude attribute : srcset
+
+	// spacer(exclude element)
+	// span(only include global attributes)
+	// strike(only include global attributes)
+	// strong(only include global attributes)
+	// style(exclude element)
+	// sub(only include global attributes)
+	// summary(only include global attributes)
+	// sup(only include global attributes)
+	// svg(exclude element)
+
 	private String[] tableDefaultAttributeArray = {"align", "bgcolor", "border", "cellpadding", "cellspacing", "frame", "rules", "summary", "width"};
-	private String[] tbodyDefaultAttributeArray = {"align", "char", "charoff", "valign"};
-
-	// exclude attribute : nowrap
+	private String[] tbodyDefaultAttributeArray = {"align", "char", "charoff", "valign", "bgcolor"};
 	private String[] tdDefaultAttributeArray = {"abbr", "align", "axis", "bgcolor", "char", "charoff", "colspan", "headers", "height", "rowspan", "scope", "valign", "width"};
-	private String[] textareaDefaultAttributeArray = {"autofocus", "cols", "dirname", "disabled", "form", "maxlength", "name", "placeholder", "readonly", "required", "rows", "wrap"};
-	private String[] tfootDefaultAttributeArray = {"align", "char", "charoff", "valign"};
 
-	// exclude attribute : nowrap, sorted
+	// template(exclude element)
+
+	private String[] textareaDefaultAttributeArray = {"autofocus", "cols", "disabled", "form", "maxlength", "name", "placeholder", "readonly", "required", "rows", "wrap", "autocomplete"}; // exclude attribute : dirname, autocapitalize, minlength, spellcheck
+	private String[] tfootDefaultAttributeArray = {"align", "char", "charoff", "valign", "bgcolor"};
 	private String[] thDefaultAttributeArray = {"abbr", "align", "axis", "bgcolor", "char", "charoff", "colspan", "headers", "height", "rowspan", "scope", "valign", "width"};
-	private String[] theadDefaultAttributeArray = {"align", "char", "charoff", "valign"};
+	private String[] theadDefaultAttributeArray = {"align", "char", "charoff", "valign", "bgcolor"};
 	private String[] timeDefaultAttributeArray = {"datetime"};
+
+	// title(only include global attributes)
+
 	private String[] trDefaultAttributeArray = {"align", "bgcolor", "char", "charoff", "valign"};
 	private String[] trackDefaultAttributeArray = {"default", "kind", "label", "src", "srclang"};
+
+	// tt(only include global attributes)
+	// u(only include global attributes)
+
 	private String[] ulDefaultAttributeArray = {"compact", "type"};
-	private String[] videoDefaultAttributeArray = {"autoplay", "controls", "height", "loop", "muted", "poster", "preload", "src", "width"};
+
+	// var(only include global attributes)
+
+	private String[] videoDefaultAttributeArray = {"autoplay", "controls", "height", "loop", "muted", "poster", "preload", "src", "width"}; // exclude attribute : autoPictureInPicture buffered controlslist crossorigin currentTime disablePictureInPicture disableRemotePlayback duration intrinsicsize playsinline
+
+	// wbr(only include global attributes)
+	// xmp(only include global attributes)
 
 	private static PolicyFactory NAVER_DEFAULT_POLICY;
 	private static NaverHtmlPolicy instance;
@@ -178,6 +219,8 @@ public class NaverHtmlPolicy {
 		String[] audioAttributeArray = addAll(audioDefaultAttributeArray, mdnGlobalAttributeArray);
 		// basefont
 		String[] basefontAttributeArray = addAll(basefontDefaultAttributeArray, mdnGlobalAttributeArray);
+		// bdo
+		String[] bdoAttributeArray = addAll(bdoDefaultAttributeArray, mdnGlobalAttributeArray);
 		// blockquote
 		String[] blockquoteAttributeArray = addAll(blockquoteDefaultAttributeArray, mdnGlobalAttributeArray);
 		// button
@@ -244,8 +287,6 @@ public class NaverHtmlPolicy {
 		String[] optionAttributeArray = addAll(optionDefaultAttributeArray, mdnGlobalAttributeArray);
 		// output
 		String[] outputAttributeArray = addAll(outputDefaultAttributeArray, mdnGlobalAttributeArray);
-		// p
-		String[] pAttributeArray = addAll(pDefaultAttributeArray, mdnGlobalAttributeArray);
 		// param
 		String[] paramAttributeArray = addAll(paramDefaultAttributeArray, mdnGlobalAttributeArray);
 		// pre
@@ -324,7 +365,7 @@ public class NaverHtmlPolicy {
 			.allowAttributes(mdnGlobalAttributeArray).onElements("bdi")
 
 			.allowElements("bdo")
-			.allowAttributes(mdnGlobalAttributeArray).onElements("bdo")
+			.allowAttributes(bdoAttributeArray).onElements("bdo")
 
 			.allowElements("big")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("big")
@@ -466,14 +507,14 @@ public class NaverHtmlPolicy {
 			.allowElements("map")
 			.allowAttributes(mapAttributeArray).onElements("map")
 
+			.allowElements("mark")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("mark")
+
 			.allowElements("marquee")
 			.allowAttributes(marqueeDefaultAttributeArray).onElements("marquee")
 
 			.allowElements("menu")
 			.allowAttributes(menuAttributeArray).onElements("menu")
-
-			.allowElements("mark")
-			.allowAttributes(mdnGlobalAttributeArray).onElements("mark")
 
 			.allowElements("meter")
 			.allowAttributes(meterAttributeArray).onElements("meter")
@@ -481,12 +522,13 @@ public class NaverHtmlPolicy {
 			.allowElements("nav")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("nav")
 
+			.allowElements("nobr")
+
 			.allowElements("noframes")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("noframes")
 
 			.allowElements("noscript")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("noscript")
-
-			// object(exclude element)
 
 			.allowElements("ol")
 			.allowAttributes(olAttributeArray).onElements("ol")
@@ -501,12 +543,10 @@ public class NaverHtmlPolicy {
 			.allowAttributes(outputAttributeArray).onElements("output")
 
 			.allowElements("p")
-			.allowAttributes(pAttributeArray).onElements("p")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("p")
 
 			.allowElements("param")
 			.allowAttributes(paramAttributeArray).onElements("param")
-
-			// picture(exclude element)
 
 			.allowElements("pre")
 			.allowAttributes(preAttributeArray).onElements("pre")
@@ -532,8 +572,6 @@ public class NaverHtmlPolicy {
 			.allowElements("samp")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("samp")
 
-			// script(exclude element)
-
 			.allowElements("section")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("section")
 
@@ -550,11 +588,10 @@ public class NaverHtmlPolicy {
 			.allowAttributes(mdnGlobalAttributeArray).onElements("span")
 
 			.allowElements("strike")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("strike")
 
 			.allowElements("strong")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("strong")
-
-			// style(exclude element)
 
 			.allowElements("sub")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("sub")
@@ -565,8 +602,6 @@ public class NaverHtmlPolicy {
 			.allowElements("sup")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("sup")
 
-			// svg(exclude element)
-
 			.allowElements("table")
 			.allowAttributes(tableAttributeArray).onElements("table")
 
@@ -575,8 +610,6 @@ public class NaverHtmlPolicy {
 
 			.allowElements("td")
 			.allowAttributes(tdAttributeArray).onElements("td")
-
-			// template(exclude element)
 
 			.allowElements("textarea")
 			.allowAttributes(textareaAttributeArray).onElements("textarea")
@@ -603,6 +636,7 @@ public class NaverHtmlPolicy {
 			.allowAttributes(trackAttributeArray).onElements("track")
 
 			.allowElements("tt")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("tt")
 
 			.allowElements("u")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("u")
@@ -618,6 +652,9 @@ public class NaverHtmlPolicy {
 
 			.allowElements("wbr")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("wbr")
+
+			.allowElements("xmp")
+			.allowAttributes(mdnGlobalAttributeArray).onElements("xmp")
 
 			.allowUrlProtocols("https", "http")
 			.toFactory();
