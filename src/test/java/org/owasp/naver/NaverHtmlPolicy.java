@@ -1,5 +1,7 @@
 package org.owasp.naver;
 
+import org.owasp.html.AttributePolicy;
+import org.owasp.html.CssSchema;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 
@@ -342,6 +344,7 @@ public class NaverHtmlPolicy {
 
 			.allowElements("applet")
 			.allowAttributes(appletDefaultAttributeArray).onElements("applet")
+			.disallowAttributes("style").onElements("applet")
 
 			.allowElements("area")
 			.allowAttributes(areaAttributeArray).onElements("area")
@@ -512,6 +515,7 @@ public class NaverHtmlPolicy {
 
 			.allowElements("marquee")
 			.allowAttributes(marqueeDefaultAttributeArray).onElements("marquee")
+			.disallowAttributes("style").onElements("marquee")
 
 			.allowElements("menu")
 			.allowAttributes(menuAttributeArray).onElements("menu")
@@ -656,6 +660,8 @@ public class NaverHtmlPolicy {
 			.allowElements("xmp")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("xmp")
 
+			.allowStyling(CssSchema.DEFAULT)
+			.allowUrlsInStyles(AttributePolicy.IDENTITY_ATTRIBUTE_POLICY)
 			.allowUrlProtocols("https", "http")
 			.toFactory();
 	}
