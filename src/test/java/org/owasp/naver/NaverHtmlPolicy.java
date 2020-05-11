@@ -1,7 +1,10 @@
 package org.owasp.naver;
 
+import java.util.List;
+
 import org.owasp.html.AttributePolicy;
 import org.owasp.html.CssSchema;
+import org.owasp.html.ElementPolicy;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 
@@ -330,7 +333,6 @@ public class NaverHtmlPolicy {
 
 			.allowElements("a")
 			.allowAttributes(aAttributeArray).onElements("a")
-			// .allowAttributes("href").matching().onElements("a")
 			.disallowAttributes("style").onElements("a")
 
 			.allowElements("abbr")
@@ -481,7 +483,13 @@ public class NaverHtmlPolicy {
 			.allowAttributes(mdnGlobalAttributeArray).onElements("i")
 
 			.allowElements("img")
-			.allowAttributes(imgAttributeArray).onElements("img")
+			.allowElements(
+				new ElementPolicy() {
+					public String apply(String elementName, List<String> attrs) {
+						return "img";
+					}
+				}, "image")
+			.allowAttributes(imgAttributeArray).onElements("img", "image")
 
 			.allowElements("input")
 			.allowAttributes(inputAttributeArray).onElements("input")
@@ -663,6 +671,8 @@ public class NaverHtmlPolicy {
 			.allowStyling(CssSchema.DEFAULT)
 			.allowUrlsInStyles(AttributePolicy.IDENTITY_ATTRIBUTE_POLICY)
 			.allowUrlProtocols("https", "http")
+//			.allowWithoutAttributes("a", "font", "img", "input", "span") // HtmlPolicyBuilder.java DEFAULT_SKIP_IF_EMPTY
+			.allowWithoutAttributes("a", "img", "input", "span") // HtmlPolicyBuilder.java DEFAULT_SKIP_IF_EMPTY
 			.toFactory();
 	}
 

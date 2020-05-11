@@ -24,14 +24,6 @@ public class NaverPolicyTest {
 
 	@Before
 	public void setUp() throws Exception {
-
-
-		// todo find the way how to make policy override easy
-//		OVERRIDED_POLICY_DEFINITION = NAVER_DEFAULT_POLICY.and(
-//			new HtmlPolicyBuilder()
-//				.allowElements("a")
-//				.allowAttributes(aAttributeArray).onElements("a")
-//				.toFactory());
 	}
 
 	@Test
@@ -40,15 +32,15 @@ public class NaverPolicyTest {
 			+ "<a href='java\0script:bad()'>1</a>"
 			+ "<a style='color: red; font-weight; expression(foo());, direction: rtl; font-weight: bold'>2</a>"
 			+ "<a href='foo.html'>3</a>"
-			+ "<a href='http://outside.org/'>5</a>"
+			+ "<a href='http://outside.org/'>4</a>"
 			+ "</p>";
 		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty1);
-		System.out.println(clean);
+		assertEquals("<p><a>1</a><a>2</a><a href=\"foo.html\">3</a><a href=\"http://outside.org/\">4</a></p>", clean);
 	}
 
 	@Test
 	public void expandTest() {
-	// todo 기능 확장했을 때 정상적으로 extends 되는지 체크
+	// todo extend test
 		PolicyFactory expandPolicy = NaverHtmlPolicy.getExpandPolicy(
 			new HtmlPolicyBuilder()
 				.allowElements("a")
@@ -59,19 +51,47 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void span() {
-//		String dirty = "<a b>";
-//		String dirty = "<!a>"; // 요놈은 태그(엘리먼트)로 인식하면 안된다.
-//		String dirty = " onmouseover=prompt(954996)";
-//		String dirty = "<span><div><h1>div테스트</h1></div></span>";
-//		String dirty = "<div><span><h1>div테스트</h1></span></div>";
-//		String dirty = "<div><span><p>div테스트</p></span></div>";
+	public void name() {
+		String dirty = "<font>Hi</font>";
+		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
+		System.out.println(clean);
+	}
 
-		// todo span 에 속성이 없으면 span 태그 자체가 없어지는 이유가 뭘까
-//		String dirty = "<span style=\"color:red\">ABC</span>";
-		String dirty = "<span>ABC</span>";
-//		String dirty = "<b>ABC</b>";
+	@Test
+	public void spanTagTest() {
+		String dirty = "<span><div><h1>Hello</h1></div></span>";
+		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
+		assertEquals("<span><div><h1>Hello</h1></div></span>", clean);
+		System.out.println(clean);
+	}
 
+	@Test
+	public void noscriptTagTest() {
+		String dirty = "<noscript><p title=\"</noscript><img src=x onerror=alert(1)>\">";
+		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
+		System.out.println(clean);
+		assertEquals("<noscript>"
+				+ "<p title=\"&lt;/noscript&gt;&lt;img src&#61;x onerror&#61;alert(1)&gt;\">"
+				+ "</p>"
+				+ "</noscript>", clean);
+	}
+
+	@Test
+	public void imageTagTest() {
+//		String dirty = "<a href='javascript:alert(1337)//:http'>Bad</a>";
+		String dirty = "<image src=\"http://example.com/foo.png\" />";
+		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
+		assertEquals("<img src=\"http://example.com/foo.png\" />", clean);
+
+		dirty = "<Image src=\"http://example.com/bar.png\"><IMAGE>";
+		clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
+		assertEquals("<img src=\"http://example.com/bar.png\" /><img />", clean);
+	}
+
+	// todo only string
+	@Test
+	public void onlyStringTest() {
+		String dirty = "javascript:alert(1)";
 		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
 		System.out.println(clean);
 	}
@@ -129,9 +149,10 @@ public class NaverPolicyTest {
 
 	@Test
 	public void hrefAttackTest() {
-		String dirty = "<a HREF=\"javascript:alert('XSS');\">Hello</a>"; // href는 FilterUrlByProtocolAttributePolicy 정책을 따른다. : 앞이 프로토콜로 인식하는데 가능한건 http, https 니까 제거됌
+		// href는 FilterUrlByProtocolAttributePolicy 정책을 따른다. : 앞이 프로토콜로 인식하는데 가능한건 http, https 니까 제거됌
+		String dirty = "<a HREF=\"javascript:alert('XSS');\">Hello</a>";
 		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
-		assertEquals("Hello", clean);
+		assertEquals("<a>Hello</a>", clean);
 	}
 
 	@Test
@@ -154,43 +175,30 @@ public class NaverPolicyTest {
 		dirty = "<marquee STYLE=\"color:red;background-image: url(javascript:alert('XSS'))\">";
 		clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
 		assertEquals("<marquee></marquee>", clean);
-
-	}
-
-	@Test
-	public void abb() {
-		// todo how to check style not allowed pattern? Is it impossible?
-		/*
-		<attribute name="style">
-			<notAllowedPattern><![CDATA[(?i:j\\*a\\*v\\*a\\*s\\*c\\*r\\*i\\*p\\*t\\*:)]]></notAllowedPattern>
-			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
-			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
-		</attribute>
-		*/
-//		String dirty = "<div style=\"color:red;background-image: url(alert('XSS'))\">";
-//		String dirty = "<DIV STYLE=\"background-image: TEST\">";
-//		String dirty = "<DIV STYLE=\"color: red\">";
-//		String dirty = "<div style=\"color:red;background-image:url(&#39;http://example.com/foo.png&#39;)\">div content</div>";
-//		String dirty = "<div style=\"background-image: url(\'test.png\')\">Hello</div>";
-//		String dirty = "<div style=\"background-image: url(\'images/test.png\')\">Hello</div>";
-//		String dirty = "<div style=\"background-image: url(\"images/test.png\")\">Hello</div>";
-//		String dirty = "<div style=\"background-image: none\">div content</div>";
-//		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
-//		assertEquals("<table><colgroup></colgroup></table>", clean);
-		String dirty = "<img src='script:/lereve/lelogo.gif' width='700'>";
-		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
-		System.out.println(clean);
 	}
 
 	@Test
 	public void emptyTagTest() {
-		String dirty = "<p>";
+
+		String dirty = "<a b>";
 		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
+		assertEquals("<a></a>", clean);
+
+		dirty = "<!a>";
+		clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
+		assertEquals("", clean);
+
+		dirty = "<p>";
+		clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
 		assertEquals("<p></p>", clean);
 
 		dirty = "</p>";
 		clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
 		assertEquals("", clean);
+
+		dirty = "<li></li>";
+		clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
+		assertEquals("<ul><li></li></ul>", clean);
 
 		// TagBalancingHtmlStreamEventReceiver.java 111 Line 에서 tbody 추가
 		dirty = "<table><td>Hello</td></table>";
@@ -215,57 +223,4 @@ public class NaverPolicyTest {
 		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
 		assertEquals("<p>Hello</p>", clean);
 	}
-
-//	@Test
-//	public void objectTest() throws Exception {
-//		String dirty = "<object type=\"text/html\"><param name=\"src\" value=\"http://serviceapi.nmv.naver.com/\"></object>";
-//		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
-//		System.out.println(clean);
-//	}
-
-//	@Test
-//	// 정상적인 HTML 페이지를 통과 시키는지 검사한다.(필터링 전후가 동일하면 정상)
-//	public void testHtmlFiltering() throws Exception {
-//		for (String valid : readString(NORMAL_HTML_FILES)) {
-//			String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(valid);
-//			assertEquals("\n" + valid + "\n" + clean, valid, clean);
-//		}
-//	}
-//
-//	protected List<String> readString(String... filePaths) throws Exception {
-//		List<String> result = new ArrayList<>();
-//		for (String filePath : filePaths) {
-//			result.add(readString(filePath));
-//		}
-//		return result;
-//	}
-//
-//	protected String readString(String filePath) throws IOException {
-//		List<String> lines = readLines(filePath);
-//		StringBuilder buffer = new StringBuilder();
-//		for (String line : lines) {
-//			buffer.append(line);
-//		}
-//
-//		return buffer.toString();
-//	}
-//
-//	// 클래스 경로의 파일을 읽고 라인 단위로 읽어서() List로 반환한다.
-//	protected List<String> readLines(String filePath) throws IOException {
-//		List<String> lines = new ArrayList<>();
-//		InputStream resourceAsStream = this.getClass().getResourceAsStream(filePath);
-//		BufferedReader in = new BufferedReader(new InputStreamReader(
-//				resourceAsStream, StandardCharsets.UTF_8));
-//		String line;
-//		while (null != (line = in.readLine())) {
-//			if (line.startsWith("#") || 0 == line.length()) {
-//				continue;
-//			}
-//
-//			lines.add(line.trim());
-//		}
-//		in.close();
-//
-//		return lines;
-//	}
 }

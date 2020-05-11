@@ -265,7 +265,7 @@ final class HtmlInputSplitter extends AbstractTokenStream {
   private final String input;
   /** An offset into input. */
   private int offset;
-  /** True iff the current character is inside a tag. */
+  /** True if the current character is inside a tag. */
   private boolean inTag;
   /**
    * True if inside a script, xmp, listing, or similar tag whose content does
