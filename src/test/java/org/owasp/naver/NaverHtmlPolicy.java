@@ -221,117 +221,117 @@ public class NaverHtmlPolicy {
 
 	private NaverHtmlPolicy() {
 		// a
-		String[] aAttributeArray = addAll(aDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] aAttributeArray = appendGlobalAttributes(aDefaultAttributeArray);
 		// area
-		String[] areaAttributeArray = addAll(areaDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] areaAttributeArray = appendGlobalAttributes(areaDefaultAttributeArray);
 		// audio
-		String[] audioAttributeArray = addAll(audioDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] audioAttributeArray = appendGlobalAttributes(audioDefaultAttributeArray);
 		// basefont
-		String[] basefontAttributeArray = addAll(basefontDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] basefontAttributeArray = appendGlobalAttributes(basefontDefaultAttributeArray);
 		// bdo
-		String[] bdoAttributeArray = addAll(bdoDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] bdoAttributeArray = appendGlobalAttributes(bdoDefaultAttributeArray);
 		// blockquote
-		String[] blockquoteAttributeArray = addAll(blockquoteDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] blockquoteAttributeArray = appendGlobalAttributes(blockquoteDefaultAttributeArray);
 		// button
-		String[] buttonAttributeArray = addAll(buttonDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] buttonAttributeArray = appendGlobalAttributes(buttonDefaultAttributeArray);
 		// canvas
-		String[] canvasAttributeArray = addAll(canvasDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] canvasAttributeArray = appendGlobalAttributes(canvasDefaultAttributeArray);
 		// caption
-		String[] captionAttributeArray = addAll(captionDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] captionAttributeArray = appendGlobalAttributes(captionDefaultAttributeArray);
 		// col
-		String[] colAttributeArray = addAll(colDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] colAttributeArray = appendGlobalAttributes(colDefaultAttributeArray);
 		// colgroup
-		String[] colgroupAttributeArray = addAll(colgroupDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] colgroupAttributeArray = appendGlobalAttributes(colgroupDefaultAttributeArray);
 		// command
-		String[] commandAttributeArray = addAll(commandDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] commandAttributeArray = appendGlobalAttributes(commandDefaultAttributeArray);
 		// dd
-		String[] ddAttributeArray = addAll(ddDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] ddAttributeArray = appendGlobalAttributes(ddDefaultAttributeArray);
 		// del
-		String[] delAttributeArray = addAll(delDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] delAttributeArray = appendGlobalAttributes(delDefaultAttributeArray);
 		// details
-		String[] detailsAttributeArray = addAll(detailsDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] detailsAttributeArray = appendGlobalAttributes(detailsDefaultAttributeArray);
 		// dir
-		String[] dirAttributeArray = addAll(dirDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] dirAttributeArray = appendGlobalAttributes(dirDefaultAttributeArray);
 		// fieldset
-		String[] fieldsetAttributeArray = addAll(fieldsetDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] fieldsetAttributeArray = appendGlobalAttributes(fieldsetDefaultAttributeArray);
 		// font
-		String[] fontAttributeArray = addAll(fontDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] fontAttributeArray = appendGlobalAttributes(fontDefaultAttributeArray);
 		// form
-		String[] formAttributeArray = addAll(formDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] formAttributeArray = appendGlobalAttributes(formDefaultAttributeArray);
 		// frame
-		String[] frameAttributeArray = addAll(frameDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] frameAttributeArray = appendGlobalAttributes(frameDefaultAttributeArray);
 		// frameset
-		String[] framesetAttributeArray = addAll(framesetDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] framesetAttributeArray = appendGlobalAttributes(framesetDefaultAttributeArray);
 		// head
-		String[] headAttributeArray = addAll(headDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] headAttributeArray = appendGlobalAttributes(headDefaultAttributeArray);
 		// hr
-		String[] hrAttributeArray = addAll(hrDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] hrAttributeArray = appendGlobalAttributes(hrDefaultAttributeArray);
 		// html
-		String[] htmlAttributeArray = addAll(htmlDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] htmlAttributeArray = appendGlobalAttributes(htmlDefaultAttributeArray);
 		// img
-		String[] imgAttributeArray = addAll(imgDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] imgAttributeArray = appendGlobalAttributes(imgDefaultAttributeArray);
 		// input
-		String[] inputAttributeArray = addAll(inputDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] inputAttributeArray = appendGlobalAttributes(inputDefaultAttributeArray);
 		// ins
-		String[] insAttributeArray = addAll(insDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] insAttributeArray = appendGlobalAttributes(insDefaultAttributeArray);
 		// isindex
-		String[] isindexAttributeArray = addAll(isindexDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] isindexAttributeArray = appendGlobalAttributes(isindexDefaultAttributeArray);
 		// keygen
-		String[] keygenAttributeArray = addAll(keygenDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] keygenAttributeArray = appendGlobalAttributes(keygenDefaultAttributeArray);
 		// label
-		String[] labelAttributeArray = addAll(labelDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] labelAttributeArray = appendGlobalAttributes(labelDefaultAttributeArray);
 		// li
-		String[] liAttributeArray = addAll(liDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] liAttributeArray = appendGlobalAttributes(liDefaultAttributeArray);
 		// map
-		String[] mapAttributeArray = addAll(mapDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] mapAttributeArray = appendGlobalAttributes(mapDefaultAttributeArray);
 		// menu
-		String[] menuAttributeArray = addAll(menuDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] menuAttributeArray = appendGlobalAttributes(menuDefaultAttributeArray);
 		// meter
-		String[] meterAttributeArray = addAll(meterDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] meterAttributeArray = appendGlobalAttributes(meterDefaultAttributeArray);
 		// ol
-		String[] olAttributeArray = addAll(olDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] olAttributeArray = appendGlobalAttributes(olDefaultAttributeArray);
 		// optgroup
-		String[] optgroupAttributeArray = addAll(optgroupDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] optgroupAttributeArray = appendGlobalAttributes(optgroupDefaultAttributeArray);
 		// option
-		String[] optionAttributeArray = addAll(optionDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] optionAttributeArray = appendGlobalAttributes(optionDefaultAttributeArray);
 		// output
-		String[] outputAttributeArray = addAll(outputDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] outputAttributeArray = appendGlobalAttributes(outputDefaultAttributeArray);
 		// param
-		String[] paramAttributeArray = addAll(paramDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] paramAttributeArray = appendGlobalAttributes(paramDefaultAttributeArray);
 		// pre
-		String[] preAttributeArray = addAll(preDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] preAttributeArray = appendGlobalAttributes(preDefaultAttributeArray);
 		// progress
-		String[] progressAttributeArray = addAll(progressDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] progressAttributeArray = appendGlobalAttributes(progressDefaultAttributeArray);
 		// q
-		String[] qAttributeArray = addAll(qDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] qAttributeArray = appendGlobalAttributes(qDefaultAttributeArray);
 		// select
-		String[] selectAttributeArray = addAll(selectDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] selectAttributeArray = appendGlobalAttributes(selectDefaultAttributeArray);
 		// source
-		String[] sourceAttributeArray = addAll(sourceDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] sourceAttributeArray = appendGlobalAttributes(sourceDefaultAttributeArray);
 		// table
-		String[] tableAttributeArray = addAll(tableDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] tableAttributeArray = appendGlobalAttributes(tableDefaultAttributeArray);
 		// tbody
-		String[] tbodyAttributeArray = addAll(tbodyDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] tbodyAttributeArray = appendGlobalAttributes(tbodyDefaultAttributeArray);
 		// td
-		String[] tdAttributeArray = addAll(tdDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] tdAttributeArray = appendGlobalAttributes(tdDefaultAttributeArray);
 		// textarea
-		String[] textareaAttributeArray = addAll(textareaDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] textareaAttributeArray = appendGlobalAttributes(textareaDefaultAttributeArray);
 		// tfoot
-		String[] tfootAttributeArray = addAll(tfootDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] tfootAttributeArray = appendGlobalAttributes(tfootDefaultAttributeArray);
 		// th
-		String[] thAttributeArray = addAll(thDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] thAttributeArray = appendGlobalAttributes(thDefaultAttributeArray);
 		// thead
-		String[] theadAttributeArray = addAll(theadDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] theadAttributeArray = appendGlobalAttributes(theadDefaultAttributeArray);
 		// time
-		String[] timeAttributeArray = addAll(timeDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] timeAttributeArray = appendGlobalAttributes(timeDefaultAttributeArray);
 		// tr
-		String[] trAttributeArray = addAll(trDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] trAttributeArray = appendGlobalAttributes(trDefaultAttributeArray);
 		// track
-		String[] trackAttributeArray = addAll(trackDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] trackAttributeArray = appendGlobalAttributes(trackDefaultAttributeArray);
 		// ul
-		String[] ulAttributeArray = addAll(ulDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] ulAttributeArray = appendGlobalAttributes(ulDefaultAttributeArray);
 		// video
-		String[] videoAttributeArray = addAll(videoDefaultAttributeArray, mdnGlobalAttributeArray);
+		String[] videoAttributeArray = appendGlobalAttributes(videoDefaultAttributeArray);
 
 		NAVER_DEFAULT_POLICY = new HtmlPolicyBuilder()
 
@@ -487,13 +487,7 @@ public class NaverHtmlPolicy {
 			.allowAttributes(mdnGlobalAttributeArray).onElements("i")
 
 			.allowElements("img")
-			.allowElements(
-				new ElementPolicy() {
-					public String apply(String elementName, List<String> attrs) {
-						return "img";
-					}
-				}, "image")
-			.allowAttributes(imgAttributeArray).onElements("img", "image")
+			.allowAttributes(imgAttributeArray).onElements("img")
 
 			.allowElements("input")
 			.allowAttributes(inputAttributeArray).onElements("input")
@@ -675,8 +669,7 @@ public class NaverHtmlPolicy {
 			.allowStyling(CssSchema.DEFAULT)
 			.allowUrlsInStyles(AttributePolicy.IDENTITY_ATTRIBUTE_POLICY)
 			.allowUrlProtocols("https", "http")
-//			.allowWithoutAttributes("a", "font", "img", "input", "span") // HtmlPolicyBuilder.java DEFAULT_SKIP_IF_EMPTY
-			.allowWithoutAttributes("font", "img", "input", "span") // HtmlPolicyBuilder.java DEFAULT_SKIP_IF_EMPTY
+			.allowWithoutAttributes("a", "font", "img", "input", "span") // HtmlPolicyBuilder.java DEFAULT_SKIP_IF_EMPTY
 			.toFactory();
 	}
 
@@ -693,12 +686,10 @@ public class NaverHtmlPolicy {
 		return NaverHtmlPolicy.getDefaultPolicy().and(policyFactory);
 	}
 
-
-	// todo check array add
-	private static String[] addAll(String[] array1, String[] array2) {
-		String[] tempArr = new String[array1.length + array2.length];
+	private String[] appendGlobalAttributes(String[] array1) {
+		String[] tempArr = new String[array1.length + mdnGlobalAttributeArray.length];
 		System.arraycopy(array1, 0, tempArr, 0, array1.length);
-		System.arraycopy(array2, 0, tempArr, array1.length, array2.length);
+		System.arraycopy(mdnGlobalAttributeArray, 0, tempArr, array1.length, mdnGlobalAttributeArray.length);
 		return tempArr;
 	}
 }

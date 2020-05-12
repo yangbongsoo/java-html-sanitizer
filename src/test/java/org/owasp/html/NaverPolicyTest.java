@@ -81,11 +81,11 @@ public class NaverPolicyTest {
 //		String dirty = "<a href='javascript:alert(1337)//:http'>Bad</a>";
 		String dirty = "<image src=\"http://example.com/foo.png\" />";
 		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
-		assertEquals("<img src=\"http://example.com/foo.png\" />", clean);
+		assertEquals("", clean);
 
 		dirty = "<Image src=\"http://example.com/bar.png\"><IMAGE>";
 		clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
-		assertEquals("<img src=\"http://example.com/bar.png\" /><img />", clean);
+		assertEquals("", clean);
 	}
 
 	// todo only string
