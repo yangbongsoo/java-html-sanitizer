@@ -2,52 +2,131 @@ package org.owasp.html;
 
 import static org.junit.Assert.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.naver.NaverHtmlPolicy;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
+import org.owasp.naver.SampleWhiteUrl;
+import org.owasp.naver.WhiteUrlUtils;
 
 public class NaverPolicyTest {
-
-	private static final String[] NORMAL_HTML_FILES = {"xss-normal1.html"};
 
 	@Before
 	public void setUp() throws Exception {
 	}
 
 	@Test
-	public void aElementTest() {
-		String dirty1 = "<p>"
-			+ "<a href='java\0script:bad()'>1</a>"
-			+ "<a style='color: red; font-weight; expression(foo());, direction: rtl; font-weight: bold'>2</a>"
-			+ "<a href='foo.html'>3</a>"
-			+ "<a href='http://outside.org/'>4</a>"
-			+ "</p>";
-		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty1);
-		assertEquals("<p><a>1</a><a>2</a><a href=\"foo.html\">3</a><a href=\"http://outside.org/\">4</a></p>", clean);
+	public void expandWhiteUrlTest() {
+		PolicyFactory expandPolicy = NaverHtmlPolicy.getExpandPolicy(
+				new HtmlPolicyBuilder()
+						.allowElements("a")
+						.allowAttributes("href").matching(WhiteUrlUtils.predicate(SampleWhiteUrl.A_HREF_WHITE_URL_LIST)).onElements("a")
+						.allowUrlProtocols("https", "http")
+						.toFactory());
+
+		String dirty = "<a href='http://outside.org/'>4</a>";
+//		String dirty = "<a href='http://serviceapi.nmv.naver.com/'></a>";
+		String clean = expandPolicy.sanitize(dirty);
+		System.out.println(clean);
 	}
 
 	@Test
 	public void expandTest() {
-	// todo extend test
-		PolicyFactory expandPolicy = NaverHtmlPolicy.getExpandPolicy(
-			new HtmlPolicyBuilder()
+	}
+
+	@Test
+	public void expandLogicTest1() {
+		PolicyFactory beforePolicy = new HtmlPolicyBuilder()
 				.allowElements("a")
-				.allowAttributes("style").onElements("a")
+				.allowAttributes("href").onElements("a")
+				.disallowAttributes("style").onElements("a")
+				.allowUrlProtocols("https", "http")
+				.toFactory();
+
+		String dirty = "<a href='https://outside.org/' id=\"a-id\" style=\"color: red\">Hi</a>";
+		String clean = beforePolicy.sanitize(dirty);
+		assertEquals("<a href=\"https://outside.org/\">Hi</a>", clean);
+
+		PolicyFactory afterPolicy = beforePolicy.and(new HtmlPolicyBuilder()
+				.allowElements("a")
+				.allowAttributes("id", "style").onElements("a")
+				.allowUrlProtocols("mailto")
 				.toFactory());
 
-//		getExpandPolicy.sanitize()
+		clean = afterPolicy.sanitize(dirty);
+		assertEquals("<a href=\"https://outside.org/\" id=\"a-id\" style=\"color: red\">Hi</a>", clean);
+		System.out.println(clean);
+	}
+
+	@Test
+	public void expandLogicTest2() {
+		PolicyFactory beforePolicy = new HtmlPolicyBuilder()
+				.allowElements("span")
+				.allowWithoutAttributes("span")
+				.toFactory();
+
+		String spanTagString = "<span>Hi</span>";
+		String resultString = beforePolicy.sanitize(spanTagString);
+		assertEquals("<span>Hi</span>", resultString);
+
+		PolicyFactory afterPolicy = beforePolicy.and(new HtmlPolicyBuilder()
+				.allowElements("span")
+				.disallowWithoutAttributes("span")
+				.toFactory());
+
+		resultString = afterPolicy.sanitize(spanTagString);
+		// todo I think this result has problem
+		assertEquals("<span>Hi</span>", resultString);
+	}
+
+	@Test
+	public void expandLogicTest2_1() {
+		PolicyFactory beforePolicy = new HtmlPolicyBuilder()
+				.allowElements("span")
+				.toFactory();
+
+		String spanTagString = "<span>Hi</span>";
+		String resultString = beforePolicy.sanitize(spanTagString);
+		assertEquals("Hi", resultString);
+
+		PolicyFactory afterPolicy = beforePolicy.and(new HtmlPolicyBuilder()
+				.allowElements("span")
+				.allowWithoutAttributes("span")
+				.toFactory());
+
+		resultString = afterPolicy.sanitize(spanTagString);
+		assertEquals("<span>Hi</span>", resultString);
+	}
+
+	@Test
+	public void expandLogicTest3() {
+		PolicyFactory beforePolicy = new HtmlPolicyBuilder()
+				.allowElements("span")
+				.allowAttributes("id").onElements("span")
+				.toFactory();
+
+		String dirty = "<span id=\"span-id\" title=\"span-title\" style='color: red>Hi</span>";
+		String clean = beforePolicy.sanitize(dirty);
+		System.out.println(clean);
+
+		PolicyFactory afterPolicy = beforePolicy.and(new HtmlPolicyBuilder()
+				.allowElements("span")
+				.allowAttributes("title").onElements("span")
+				.toFactory());
+
+		clean = afterPolicy.sanitize(dirty);
+		System.out.println(clean);
+	}
+
+	@Test
+	public void aElementTest() {
+		String dirty = "<p>"
+				+ "<a href='java\0script:bad()'>1</a>"
+				+ "<a style='color: red; font-weight; expression(foo());, direction: rtl; font-weight: bold'>2</a>"
+				+ "<a href='foo.html'>3</a>"
+				+ "<a href='http://outside.org/'>4</a>"
+				+ "</p>";
+		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
+		assertEquals("<p><a>1</a><a>2</a><a href=\"foo.html\">3</a><a href=\"http://outside.org/\">4</a></p>", clean);
 	}
 
 	@Test

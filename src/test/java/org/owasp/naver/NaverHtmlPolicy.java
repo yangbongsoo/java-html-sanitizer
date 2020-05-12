@@ -1,10 +1,7 @@
 package org.owasp.naver;
 
-import java.util.List;
-
 import org.owasp.html.AttributePolicy;
 import org.owasp.html.CssSchema;
-import org.owasp.html.ElementPolicy;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 
@@ -682,14 +679,14 @@ public class NaverHtmlPolicy {
 		return NAVER_DEFAULT_POLICY;
 	}
 
-	public static PolicyFactory getExpandPolicy(PolicyFactory policyFactory) {
-		return NaverHtmlPolicy.getDefaultPolicy().and(policyFactory);
-	}
-
 	private String[] appendGlobalAttributes(String[] array1) {
 		String[] tempArr = new String[array1.length + mdnGlobalAttributeArray.length];
 		System.arraycopy(array1, 0, tempArr, 0, array1.length);
 		System.arraycopy(mdnGlobalAttributeArray, 0, tempArr, array1.length, mdnGlobalAttributeArray.length);
 		return tempArr;
+	}
+
+	public static PolicyFactory getExpandPolicy(PolicyFactory policyFactory) {
+		return NaverHtmlPolicy.getDefaultPolicy().and(policyFactory);
 	}
 }
