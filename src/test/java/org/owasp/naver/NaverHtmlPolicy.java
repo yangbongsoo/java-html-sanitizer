@@ -30,6 +30,7 @@ public class NaverHtmlPolicy {
 
 	private String[] basefontDefaultAttributeArray = {"color", "face", "size"};
 
+	// bb(exclude element)
 	// bdi(only include global attributes)
 
 	private String[] bdoDefaultAttributeArray = {"dir"};
@@ -53,12 +54,11 @@ public class NaverHtmlPolicy {
 
 	private String[] colDefaultAttributeArray = {"align", "char", "charoff", "span", "valign", "width", "bgcolor"};
 	private String[] colgroupDefaultAttributeArray = {"align", "char", "charoff", "span", "valign", "bgcolor"};
-
-	// content(exclude element)
-
 	private String[] commandDefaultAttributeArray = {"checked", "disabled", "icon", "label", "radiogroup", "type"};
 
+	// content(exclude element)
 	// data(exclude element)
+	// datagrid(exclude element)
 	// datalist(only include global attributes)
 
 	private String[] ddDefaultAttributeArray = {"nowrap"};
@@ -73,6 +73,7 @@ public class NaverHtmlPolicy {
 	// div(only include global attributes)
 	// dl(only include global attributes)
 	// dt(only include global attributes)
+	// element(exclude element)
 	// em(only include global attributes)
 	// embed(exclude element)
 
@@ -134,8 +135,10 @@ public class NaverHtmlPolicy {
 
 	private String[] meterDefaultAttributeArray = {"form", "high", "low", "max", "min", "optimum", "value"};
 
+	// multicol(exclude element)
 	// nav(only include global attributes)
 	// nobr(don't include any attribute. but not exclude element)
+	// noembed(exclude element)
 	// noframes(only include global attributes)
 	// noscript(only include global attributes)
 	// object(exclude element)
@@ -211,6 +214,7 @@ public class NaverHtmlPolicy {
 
 	// wbr(only include global attributes)
 	// xmp(only include global attributes)
+	// xcustom(exclude element)
 
 	private static PolicyFactory NAVER_DEFAULT_POLICY;
 	private static NaverHtmlPolicy instance;
@@ -672,7 +676,7 @@ public class NaverHtmlPolicy {
 			.allowUrlsInStyles(AttributePolicy.IDENTITY_ATTRIBUTE_POLICY)
 			.allowUrlProtocols("https", "http")
 //			.allowWithoutAttributes("a", "font", "img", "input", "span") // HtmlPolicyBuilder.java DEFAULT_SKIP_IF_EMPTY
-			.allowWithoutAttributes("a", "img", "input", "span") // HtmlPolicyBuilder.java DEFAULT_SKIP_IF_EMPTY
+			.allowWithoutAttributes("font", "img", "input", "span") // HtmlPolicyBuilder.java DEFAULT_SKIP_IF_EMPTY
 			.toFactory();
 	}
 

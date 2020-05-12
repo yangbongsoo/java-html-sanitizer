@@ -52,7 +52,7 @@ public class NaverPolicyTest {
 
 	@Test
 	public void name() {
-		String dirty = "<font>Hi</font>";
+		String dirty = "<a>Y</a>";
 		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
 		System.out.println(clean);
 	}
