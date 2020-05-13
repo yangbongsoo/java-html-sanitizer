@@ -34,6 +34,14 @@ public class NaverPolicyTest {
 	}
 
 	@Test
+	public void name() {
+		String dirty = "<a>Y</a>";
+		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
+		System.out.println(clean);
+	}
+
+
+	@Test
 	public void expandLogicTest1() {
 		PolicyFactory beforePolicy = new HtmlPolicyBuilder()
 				.allowElements("a")
@@ -49,14 +57,16 @@ public class NaverPolicyTest {
 		PolicyFactory afterPolicy = beforePolicy.and(new HtmlPolicyBuilder()
 				.allowElements("a")
 				.allowAttributes("id", "style").onElements("a")
+				.allowAttributes("href").matching(WhiteUrlUtils.predicate(SampleWhiteUrl.A_HREF_WHITE_URL_LIST)).onElements("a")
 				.allowUrlProtocols("mailto")
 				.toFactory());
 
 		clean = afterPolicy.sanitize(dirty);
-		assertEquals("<a href=\"https://outside.org/\" id=\"a-id\" style=\"color: red\">Hi</a>", clean);
+		assertEquals("<a id=\"a-id\" style=\"color: red\">Hi</a>", clean);
 		System.out.println(clean);
 	}
 
+	// todo pre/post processor and logic
 	@Test
 	public void expandLogicTest2() {
 		PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -69,7 +79,8 @@ public class NaverPolicyTest {
 		assertEquals("<span>Hi</span>", resultString);
 
 		PolicyFactory afterPolicy = beforePolicy.and(new HtmlPolicyBuilder()
-				.allowElements("span")
+				.allowAttributes("id").globally()
+				.allowElements("span", "textarea")
 				.disallowWithoutAttributes("span")
 				.toFactory());
 
@@ -129,13 +140,7 @@ public class NaverPolicyTest {
 		assertEquals("<p><a>1</a><a>2</a><a href=\"foo.html\">3</a><a href=\"http://outside.org/\">4</a></p>", clean);
 	}
 
-	@Test
-	public void name() {
-		String dirty = "<a>Y</a>";
-		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
-		System.out.println(clean);
-	}
-
+	// todo lucy dom filter는 태그간의 관계 체크 하고, sax filter 는 체크안함
 	@Test
 	public void spanTagTest() {
 		String dirty = "<span><div><h1>Hello</h1></div></span>";

@@ -51,8 +51,8 @@ public class NaverHtmlPolicy {
 
 	private String[] colDefaultAttributeArray = {"align", "char", "charoff", "span", "valign", "width", "bgcolor"};
 	private String[] colgroupDefaultAttributeArray = {"align", "char", "charoff", "span", "valign", "bgcolor"};
-	private String[] commandDefaultAttributeArray = {"checked", "disabled", "icon", "label", "radiogroup", "type"};
 
+	// command(exclude element)
 	// content(exclude element)
 	// data(exclude element)
 	// datagrid(exclude element)
@@ -64,9 +64,7 @@ public class NaverHtmlPolicy {
 
 	// dfn(only include global attributes)
 	// dialog(exclude element)
-
-	private String[] dirDefaultAttributeArray = {"compact"};
-
+	// dir(exclude element)
 	// div(only include global attributes)
 	// dl(only include global attributes)
 	// dt(only include global attributes)
@@ -105,8 +103,8 @@ public class NaverHtmlPolicy {
 		"formnovalidate", "formtarget", "height", "list", "max", "maxlength", "min", "multiple", "name", "pattern", "placeholder", "readonly", "required", "size",
 		"src", "step", "type", "value", "width", "tabindex", "title"}; // exclude attribute : dirname, formaction, capture, inputmode, minlength, autocorrect, incremental, mozactionhint, orient, results, webkitdirectory
 	private String[] insDefaultAttributeArray = {"cite", "datetime"};
-	private String[] isindexDefaultAttributeArray = {"action", "prompt"};
 
+	// isindex(exclude element)
 	// kbd(only include global attributes)
 
 	private String[] keygenDefaultAttributeArray = {"autofocus", "challenge", "disabled", "form", "keytype", "name"};
@@ -239,16 +237,12 @@ public class NaverHtmlPolicy {
 		String[] colAttributeArray = appendGlobalAttributes(colDefaultAttributeArray);
 		// colgroup
 		String[] colgroupAttributeArray = appendGlobalAttributes(colgroupDefaultAttributeArray);
-		// command
-		String[] commandAttributeArray = appendGlobalAttributes(commandDefaultAttributeArray);
 		// dd
 		String[] ddAttributeArray = appendGlobalAttributes(ddDefaultAttributeArray);
 		// del
 		String[] delAttributeArray = appendGlobalAttributes(delDefaultAttributeArray);
 		// details
 		String[] detailsAttributeArray = appendGlobalAttributes(detailsDefaultAttributeArray);
-		// dir
-		String[] dirAttributeArray = appendGlobalAttributes(dirDefaultAttributeArray);
 		// fieldset
 		String[] fieldsetAttributeArray = appendGlobalAttributes(fieldsetDefaultAttributeArray);
 		// font
@@ -271,8 +265,6 @@ public class NaverHtmlPolicy {
 		String[] inputAttributeArray = appendGlobalAttributes(inputDefaultAttributeArray);
 		// ins
 		String[] insAttributeArray = appendGlobalAttributes(insDefaultAttributeArray);
-		// isindex
-		String[] isindexAttributeArray = appendGlobalAttributes(isindexDefaultAttributeArray);
 		// keygen
 		String[] keygenAttributeArray = appendGlobalAttributes(keygenDefaultAttributeArray);
 		// label
@@ -405,9 +397,6 @@ public class NaverHtmlPolicy {
 			.allowElements("colgroup")
 			.allowAttributes(colgroupAttributeArray).onElements("colgroup")
 
-			.allowElements("command")
-			.allowAttributes(commandAttributeArray).onElements("command")
-
 			.allowElements("datalist")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("datalist")
 
@@ -422,9 +411,6 @@ public class NaverHtmlPolicy {
 
 			.allowElements("dfn")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("dfn")
-
-			.allowElements("dir")
-			.allowAttributes(dirAttributeArray).onElements("dir")
 
 			.allowElements("div")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("div")
@@ -491,9 +477,6 @@ public class NaverHtmlPolicy {
 
 			.allowElements("ins")
 			.allowAttributes(insAttributeArray).onElements("ins")
-
-			.allowElements("isindex")
-			.allowAttributes(isindexAttributeArray).onElements("isindex")
 
 			.allowElements("kbd")
 			.allowAttributes(mdnGlobalAttributeArray).onElements("kbd")
