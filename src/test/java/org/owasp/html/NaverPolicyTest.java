@@ -4,9 +4,12 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.owasp.naver.IIMSExtendPolicy;
 import org.owasp.naver.NaverHtmlPolicy;
 import org.owasp.naver.SampleWhiteUrl;
 import org.owasp.naver.WhiteUrlUtils;
+
+import com.google.common.collect.ImmutableSet;
 
 public class NaverPolicyTest {
 
@@ -31,13 +34,48 @@ public class NaverPolicyTest {
 
 	@Test
 	public void expandTest() {
+		PolicyFactory policy = NaverHtmlPolicy.getExpandPolicy(IIMSExtendPolicy.getExtendFactory());
+
+		String dirty = "<span id=\"ss\" se2_tmp_te_border_style=\"custom\" style='position: absolute; bottom: inherit'></span>";
+		String clean = policy.sanitize(dirty);
+		System.out.println(clean);
+	}
+
+	@Test
+	public void styleExtendTest() {
+		ImmutableSet<String> EXTEND_WHITELIST = ImmutableSet.of("bottom", "position");
+		CssSchema cssSchema = CssSchema.withProperties(EXTEND_WHITELIST);
+
+		PolicyFactory beforePolicy = new HtmlPolicyBuilder()
+				.allowElements("span")
+				.allowStyling(cssSchema)
+				.toFactory();
+
+		String dirty = "<span id=\"ss\" se2_tmp_te_border_style=\"custom\" style='background-color: red;position: absolute; bottom: inherit'></span>";
+		String clean = beforePolicy.sanitize(dirty);
+		System.out.println(clean);
+
+		ImmutableSet<String> EXTEND_WHITELIST2 = ImmutableSet.of("background-color");
+		CssSchema cssSchema2 = CssSchema.withProperties(EXTEND_WHITELIST2);
+
+
+		PolicyFactory afterPolicy = beforePolicy.and(new HtmlPolicyBuilder()
+				.allowElements("span")
+				.allowStyling(cssSchema2)
+				.toFactory());
+
+		clean = afterPolicy.sanitize(dirty);
+		System.out.println(clean);
+
 	}
 
 	@Test
 	public void name() {
-		String dirty = "<a>Y</a>";
-		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
-		System.out.println(clean);
+		CssSchema.main();
+
+		//		String dirty = "<a>Y</a>";
+//		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
+//		System.out.println(clean);
 	}
 
 
@@ -78,11 +116,7 @@ public class NaverPolicyTest {
 		String resultString = beforePolicy.sanitize(spanTagString);
 		assertEquals("<span>Hi</span>", resultString);
 
-		PolicyFactory afterPolicy = beforePolicy.and(new HtmlPolicyBuilder()
-				.allowAttributes("id").globally()
-				.allowElements("span", "textarea")
-				.disallowWithoutAttributes("span")
-				.toFactory());
+		PolicyFactory afterPolicy = beforePolicy.and(IIMSExtendPolicy.getExtendFactory());
 
 		resultString = afterPolicy.sanitize(spanTagString);
 		// todo I think this result has problem
