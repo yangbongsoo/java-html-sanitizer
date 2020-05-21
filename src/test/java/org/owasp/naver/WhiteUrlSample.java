@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class SampleWhiteUrl { // naver cafe sample
+public class WhiteUrlSample { // naver cafe sample
 	public static final List<String> A_HREF_WHITE_URL_LIST = Collections.unmodifiableList(Arrays.asList(
 			"http://serviceapi.nmv.naver.com*",
 			"http://scrap.ad.naver.com*",

@@ -8,7 +8,38 @@ import java.util.regex.Pattern;
 import com.google.common.base.Predicate;
 
 public class WhiteUrlUtils {
-	public static Pattern buildPattern(String raw) {
+
+	public static List<Pattern> convertToPatternList(List<String> whiteUrlList) {
+		List<Pattern> whiteUrlPatternList = new ArrayList<>(whiteUrlList.size());
+		for (String eachWhiteUrl : whiteUrlList) {
+			Pattern pattern = buildPattern(eachWhiteUrl);
+			whiteUrlPatternList.add(pattern);
+		}
+
+		return whiteUrlPatternList;
+	}
+
+	public static Predicate<String> predicate(List<Pattern> whiteUrlPatternList) {
+		 return url -> {
+			if (url == null || url.isEmpty()) {
+				return false;
+			}
+
+			if (whiteUrlPatternList == null || whiteUrlPatternList.isEmpty()) {
+				return false;
+			}
+
+			for (Pattern eachWhiteUrlPattern : whiteUrlPatternList) {
+				if (eachWhiteUrlPattern.matcher(url).matches()) {
+					return true;
+				}
+			}
+
+			return false;
+		};
+	}
+
+	private static Pattern buildPattern(String raw) {
 		StringWriter writer = new StringWriter();
 		writer.write("['\"]?\\s*(?i:");
 
@@ -53,32 +84,5 @@ public class WhiteUrlUtils {
 		writer.write(")\\s*['\"]?");
 
 		return Pattern.compile(writer.toString());
-	}
-
-	public static Predicate<String> predicate(List<String> whiteUrlList) {
-		 return url -> {
-			if (url == null || url.isEmpty()) {
-				return false;
-			}
-
-			if (whiteUrlList == null || whiteUrlList.isEmpty()) {
-				return false;
-			}
-
-			// todo Pattern으로 만드는 작업을 항상 수행할 필요가 없는데 ...
-			 List<Pattern> patterns = new ArrayList<>();
-			 for (String eachWhiteUrl : whiteUrlList) {
-				 Pattern pattern = buildPattern(eachWhiteUrl);
-				 patterns.add(pattern);
-			 }
-
-			for (Pattern pattern : patterns) {
-				if (pattern.matcher(url).matches()) {
-					return true;
-				}
-			}
-
-			return false;
-		};
 	}
 }

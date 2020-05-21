@@ -1,13 +1,16 @@
-package org.owasp.html;
+package org.owasp.naver;
 
 import static org.junit.Assert.*;
+import static org.owasp.naver.WhiteUrlUtils.*;
+
+import java.util.List;
+import java.util.regex.Pattern;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.owasp.naver.IIMSExtendPolicy;
-import org.owasp.naver.NaverPolicy;
-import org.owasp.naver.SampleWhiteUrl;
-import org.owasp.naver.WhiteUrlUtils;
+import org.owasp.html.CssSchema;
+import org.owasp.html.HtmlPolicyBuilder;
+import org.owasp.html.PolicyFactory;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -19,15 +22,20 @@ public class NaverPolicyTest {
 
 	@Test
 	public void expandWhiteUrlTest() {
+
+		List<Pattern> patternList = convertToPatternList(WhiteUrlSample.A_HREF_WHITE_URL_LIST);
+
 		PolicyFactory expandPolicy = NaverPolicy.getExpandPolicy(
 				new HtmlPolicyBuilder()
 						.allowElements("a")
-						.allowAttributes("href").matching(WhiteUrlUtils.predicate(SampleWhiteUrl.A_HREF_WHITE_URL_LIST)).onElements("a")
+						.allowAttributes("href").matching(
+								WhiteUrlUtils.predicate(patternList)
+						).onElements("a")
 						.allowUrlProtocols("https", "http")
 						.toFactory());
 
-		String dirty = "<a href='http://outside.org/'>4</a>";
-//		String dirty = "<a href='http://serviceapi.nmv.naver.com/'></a>";
+//		String dirty = "<a href='http://outside.org/'>4</a>";
+		String dirty = "<a href='http://serviceapi.nmv.naver.com/'></a>";
 		String clean = expandPolicy.sanitize(dirty);
 		System.out.println(clean);
 	}
@@ -92,10 +100,12 @@ public class NaverPolicyTest {
 		String clean = beforePolicy.sanitize(dirty);
 		assertEquals("<a href=\"https://outside.org/\">Hi</a>", clean);
 
+		List<Pattern> patternList = convertToPatternList(WhiteUrlSample.A_HREF_WHITE_URL_LIST);
+
 		PolicyFactory afterPolicy = beforePolicy.and(new HtmlPolicyBuilder()
 				.allowElements("a")
 				.allowAttributes("id", "style").onElements("a")
-				.allowAttributes("href").matching(WhiteUrlUtils.predicate(SampleWhiteUrl.A_HREF_WHITE_URL_LIST)).onElements("a")
+				.allowAttributes("href").matching(WhiteUrlUtils.predicate(patternList)).onElements("a")
 				.allowUrlProtocols("mailto")
 				.toFactory());
 
@@ -196,7 +206,6 @@ public class NaverPolicyTest {
 
 	@Test
 	public void imageTagTest() {
-//		String dirty = "<a href='javascript:alert(1337)//:http'>Bad</a>";
 		String dirty = "<image src=\"http://example.com/foo.png\" />";
 		String clean = NaverPolicy.sanitize(dirty);
 		assertEquals("", clean);
@@ -206,20 +215,11 @@ public class NaverPolicyTest {
 		assertEquals("", clean);
 	}
 
-	// todo only string
-	@Test
-	public void onlyStringTest() {
-		String dirty = "javascript:alert(1)";
-		String clean = NaverPolicy.sanitize(dirty);
-		System.out.println(clean);
-	}
-
 	@Test
 	public void koreanTagTest() {
 		String dirty = "<하하하>";
 		String clean = NaverPolicy.sanitize(dirty);
 		assertEquals("&lt;하하하&gt;", clean);
-
 	}
 
 	@Test
