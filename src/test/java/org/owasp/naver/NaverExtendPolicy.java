@@ -2,13 +2,14 @@ package org.owasp.naver;
 
 import org.owasp.html.CssSchema;
 import org.owasp.html.HtmlPolicyBuilder;
+import org.owasp.html.HtmlStreamEventReceiverWrapper;
 import org.owasp.html.PolicyFactory;
 
 import com.google.common.collect.ImmutableSet;
 
-public final class IIMSExtendPolicy {
+public final class NaverExtendPolicy {
 
-	private IIMSExtendPolicy() {
+	private NaverExtendPolicy() {
 	}
 
 	public static PolicyFactory getExtendFactory() {
@@ -27,7 +28,19 @@ public final class IIMSExtendPolicy {
 				.allowElements("span", "textarea")
 				.allowAttributes("se2_tmp_te_border_style").onElements("span")
 				.allowStyling(cssSchema)
-				.disallowWithoutAttributes("span")
+				.withPreprocessor(
+						r -> new HtmlStreamEventReceiverWrapper(r) {
+							@Override
+							public void text(String s) {
+								System.out.println("lower!!");
+								underlying.text(s.toLowerCase());
+							}
+							@Override
+							public String toString() {
+								return "lower-text";
+							}
+						}
+				)
 				.toFactory();
 	}
 }

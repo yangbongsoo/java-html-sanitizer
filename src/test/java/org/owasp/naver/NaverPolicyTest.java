@@ -4,24 +4,29 @@ import static org.junit.Assert.*;
 import static org.owasp.naver.WhiteUrlUtils.*;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.owasp.html.CssSchema;
 import org.owasp.html.HtmlPolicyBuilder;
+import org.owasp.html.HtmlStreamEventProcessor;
+import org.owasp.html.HtmlStreamEventReceiver;
+import org.owasp.html.HtmlStreamEventReceiverWrapper;
 import org.owasp.html.PolicyFactory;
 
 import com.google.common.collect.ImmutableSet;
+import junit.framework.TestCase;
 
-public class NaverPolicyTest {
+public class NaverPolicyTest extends TestCase {
 
 	@Before
 	public void setUp() throws Exception {
 	}
 
 	@Test
-	public void expandWhiteUrlTest() {
+	public void testExpandWhiteUrl() {
 
 		List<Pattern> patternList = convertToPatternList(WhiteUrlSample.A_HREF_WHITE_URL_LIST);
 
@@ -41,8 +46,8 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void expandTest() {
-		PolicyFactory policy = NaverPolicy.getExpandPolicy(IIMSExtendPolicy.getExtendFactory());
+	public void testExpand() {
+		PolicyFactory policy = NaverPolicy.getExpandPolicy(NaverExtendPolicy.getExtendFactory());
 
 		String dirty = "<span id=\"ss\" se2_tmp_te_border_style=\"custom\" style='position: absolute; bottom: inherit'></span>";
 		String clean = policy.sanitize(dirty);
@@ -50,7 +55,7 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void styleExtendTest() {
+	public void testStyleExtend() {
 		ImmutableSet<String> EXTEND_WHITELIST = ImmutableSet.of("bottom", "position");
 		CssSchema cssSchema = CssSchema.withProperties(EXTEND_WHITELIST);
 
@@ -78,7 +83,7 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void name() {
+	public void testaa() {
 		CssSchema.main();
 
 		//		String dirty = "<a>Y</a>";
@@ -88,7 +93,7 @@ public class NaverPolicyTest {
 
 
 	@Test
-	public void expandLogicTest1() {
+	public void testExpandLogic1() {
 		PolicyFactory beforePolicy = new HtmlPolicyBuilder()
 				.allowElements("a")
 				.allowAttributes("href").onElements("a")
@@ -116,25 +121,37 @@ public class NaverPolicyTest {
 
 	// todo pre/post processor and logic
 	@Test
-	public void expandLogicTest2() {
+	public void testExpandLogic2() {
 		PolicyFactory beforePolicy = new HtmlPolicyBuilder()
 				.allowElements("span")
 				.allowWithoutAttributes("span")
+				.withPreprocessor(
+						r -> new HtmlStreamEventReceiverWrapper(r) {
+							@Override
+							public void text(String s) {
+								System.out.println("upper!!");
+								underlying.text(s.toUpperCase());
+							}
+							@Override
+							public String toString() {
+								return "shouty-text";
+							}
+						}
+				)
 				.toFactory();
 
 		String spanTagString = "<span>Hi</span>";
 		String resultString = beforePolicy.sanitize(spanTagString);
-		assertEquals("<span>Hi</span>", resultString);
+		assertEquals("<span>HI</span>", resultString);
 
-		PolicyFactory afterPolicy = beforePolicy.and(IIMSExtendPolicy.getExtendFactory());
+		PolicyFactory afterPolicy = beforePolicy.and(NaverExtendPolicy.getExtendFactory());
 
 		resultString = afterPolicy.sanitize(spanTagString);
-		// todo I think this result has problem
-		assertEquals("<span>Hi</span>", resultString);
+		assertEquals("<span>hi</span>", resultString);
 	}
 
 	@Test
-	public void expandLogicTest2_1() {
+	public void testExpandLogic2_1() {
 		PolicyFactory beforePolicy = new HtmlPolicyBuilder()
 				.allowElements("span")
 				.toFactory();
@@ -153,7 +170,7 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void expandLogicTest3() {
+	public void testExpandLogic3() {
 		PolicyFactory beforePolicy = new HtmlPolicyBuilder()
 				.allowElements("span")
 				.allowAttributes("id").onElements("span")
@@ -173,7 +190,7 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void aElementTest() {
+	public void testAElement() {
 		String dirty = "<p>"
 				+ "<a href='java\0script:bad()'>1</a>"
 				+ "<a style='color: red; font-weight; expression(foo());, direction: rtl; font-weight: bold'>2</a>"
@@ -184,17 +201,15 @@ public class NaverPolicyTest {
 		assertEquals("<p><a>1</a><a>2</a><a href=\"foo.html\">3</a><a href=\"http://outside.org/\">4</a></p>", clean);
 	}
 
-	// todo lucy dom filter는 태그간의 관계 체크 하고, sax filter 는 체크안함
 	@Test
-	public void spanTagTest() {
+	public void testSpanTag() {
 		String dirty = "<span><div><h1>Hello</h1></div></span>";
 		String clean = NaverPolicy.sanitize(dirty);
 		assertEquals("<span><div><h1>Hello</h1></div></span>", clean);
-		System.out.println(clean);
 	}
 
 	@Test
-	public void noscriptTagTest() {
+	public void testNoscriptTag() {
 		String dirty = "<noscript><p title=\"</noscript><img src=x onerror=alert(1)>\">";
 		String clean = NaverPolicy.sanitize(dirty);
 		System.out.println(clean);
@@ -205,7 +220,7 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void imageTagTest() {
+	public void testImageTag() {
 		String dirty = "<image src=\"http://example.com/foo.png\" />";
 		String clean = NaverPolicy.sanitize(dirty);
 		assertEquals("", clean);
@@ -216,14 +231,14 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void koreanTagTest() {
+	public void testKoreanTag() {
 		String dirty = "<하하하>";
 		String clean = NaverPolicy.sanitize(dirty);
 		assertEquals("&lt;하하하&gt;", clean);
 	}
 
 	@Test
-	public void urlEncodingData() {
+	public void testUrlEncodingData() {
 		// before encoding
 		String dirty = "http://m.id.hangame.com/searchInfo.nhn?type=FINDID&nxtURL=http://m.tera.hangame.com</script><img src=pooo.png onerror=alert(/V/)>";
 		String clean = NaverPolicy.sanitize(dirty);
@@ -236,7 +251,7 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void notAllowedPatternSrcAttribute() {
+	public void testNotAllowedPatternSrcAttribute() {
 		String dirty = "<img src='http://sstorym.cafe24.com/deScription/lereve/lelogo.gif' width='700'>";
 		String clean = NaverPolicy.sanitize(dirty);
 		assertEquals("<img src=\"http://sstorym.cafe24.com/deScription/lereve/lelogo.gif\" width=\"700\" />", clean);
@@ -251,7 +266,7 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void allowStylingCheckPoint() {
+	public void testAllowStylingCheckPoint() {
 		String dirty = "<b style=font-size:larger></b>";
 		String clean = NaverPolicy.sanitize(dirty);
 		assertEquals("<b style=\"font-size:larger\"></b>", clean);
@@ -266,7 +281,7 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void hrefAttackTest() {
+	public void testHrefAttack() {
 		// href는 FilterUrlByProtocolAttributePolicy 정책을 따른다. : 앞이 프로토콜로 인식하는데 가능한건 http, https 니까 제거됌
 		String dirty = "<a HREF=\"javascript:alert('XSS');\">Hello</a>";
 		String clean = NaverPolicy.sanitize(dirty);
@@ -274,14 +289,14 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void linkElementTest() {
+	public void testLinkElement() {
 		String dirty = "<LINK REL=\"stylesheet\" HREF=\"javascript:alert('XSS');\">";
 		String clean = NaverPolicy.sanitize(dirty);
 		assertEquals("", clean);
 	}
 
 	@Test
-	public void styleAttributeTest() {
+	public void testStyleAttribute() {
 		String dirty = "<DIV STYLE=\"color:red;background-image: url(javascript:alert('XSS'))\">"; // : 앞이 프로토콜로 인식하는데 가능한건 http, https 니까 제거됌
 		String clean = NaverPolicy.sanitize(dirty);
 		assertEquals("<div style=\"color:red\"></div>", clean);
@@ -296,7 +311,7 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void emptyTagTest() {
+	public void testEmptyTag() {
 
 		String dirty = "<a b>";
 		String clean = NaverPolicy.sanitize(dirty);
@@ -329,14 +344,14 @@ public class NaverPolicyTest {
 	}
 
 	@Test
-	public void videoElementTest() {
+	public void testVideoElement() {
 		String dirty = "<video width=\"320\" height=\"240\" controls=\"controls\"><source src=\"movie.mp4\" type=\"video/mp4\" pubdate=\"\"></video>";
 		String clean = NaverPolicy.sanitize(dirty);
 		assertEquals("<video width=\"320\" height=\"240\" controls=\"controls\"><source src=\"movie.mp4\" type=\"video/mp4\" /></video>", clean);
 	}
 
 	@Test
-	public void attributeCommentTest() {
+	public void testAttributeComment() {
 		String dirty = "<p tt='-->'>Hello</p>";
 		String clean = NaverPolicy.sanitize(dirty);
 		assertEquals("<p>Hello</p>", clean);
