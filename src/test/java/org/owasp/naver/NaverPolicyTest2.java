@@ -236,5 +236,182 @@ public class NaverPolicyTest2 extends TestCase {
 
 	}
 
-	// todo special tags
+	public void testSpecialTags() {
+		String attackString = "<meta http-equiv=\"refresh\" content=\"0; url=//portswigger-labs.net\">";
+		String cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		// todo check
+		attackString = "<meta charset=\"UTF-7\" /> +ADw-script+AD4-alert(1)+ADw-/script+AD4-";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals(" &#43;ADw-script&#43;AD4-alert(1)&#43;ADw-/script&#43;AD4-", cleanString);
+
+		// todo check
+		attackString = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-7\" /> +ADw-script+AD4-alert(1)+ADw-/script+AD4-";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals(" &#43;ADw-script&#43;AD4-alert(1)&#43;ADw-/script&#43;AD4-", cleanString);
+
+		// todo check
+		attackString = "+/v8 ADw-script+AD4-alert(1)+ADw-/script+AD4-";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("&#43;/v8 ADw-script&#43;AD4-alert(1)&#43;ADw-/script&#43;AD4-", cleanString);
+
+		attackString = "<meta http-equiv=\"Content-Security-Policy\" content=\"upgrade-insecure-requests\">";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<iframe sandbox src=\"//portswigger-labs.net\"></iframe>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<meta name=\"referrer\" content=\"no-referrer\">";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+	}
+
+	public void testEncoding() {
+		String attackString = "%C0%BCscript>alert(1)</script>";
+		String cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("%C0%BCscript&gt;alert(1)", cleanString);
+
+		attackString = "%E0%80%BCscript>alert(1)</script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("%E0%80%BCscript&gt;alert(1)", cleanString);
+
+		attackString = "%F0%80%80%BCscript>alert(1)</script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("%F0%80%80%BCscript&gt;alert(1)", cleanString);
+
+		attackString = "%F8%80%80%80%BCscript>alert(1)</script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("%F8%80%80%80%BCscript&gt;alert(1)", cleanString);
+
+		attackString = "%FC%80%80%80%80%BCscript>alert(1)</script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("%FC%80%80%80%80%BCscript&gt;alert(1)", cleanString);
+
+		attackString = "<script>\\u0061lert(1)</script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<script>\\u{61}lert(1)</script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<script>\\u{0000000061}lert(1)</script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<script>eval('\\x61lert(1)')</script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<script>eval('\\141lert(1)')</script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<script>eval('alert(\\061)')</script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<script>eval('alert(\\61)')</script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<a href=\"&#106;avascript:alert(1)\">XSS</a><a href=\"&#106avascript:alert(1)\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a>XSS</a><a href=\"&amp;#106avascript:alert%281%29\">XSS</a>", cleanString);
+
+		attackString = "<svg><script>&#97;lert(1)</script></svg>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<svg><script>&#x61;lert(1)</script></svg>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<svg><script>alert&NewLine;(1)</script></svg>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<svg><script>x=\"&quot;,alert(1)//\";</script></svg>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		// todo check
+		attackString = "<a href=\"&#0000106avascript:alert(1)\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a href=\"&amp;#0000106avascript:alert%281%29\">XSS</a>", cleanString);
+
+		attackString = "<a href=\"&#x6a;avascript:alert(1)\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a>XSS</a>", cleanString);
+
+		// todo check
+		attackString = "<a href=\"j&#x61vascript:alert(1)\">XSS</a> <a href=\"&#x6aavascript:alert(1)\">XSS</a><a href=\"&#x6a avascript:alert(1)\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a href=\"j&amp;#x61vascript:alert%281%29\">XSS</a> <a href=\"&amp;#x6aavascript:alert%281%29\">XSS</a><a>XSS</a>", cleanString);
+
+		attackString = "<a href=\"&#x0000006a;avascript:alert(1)\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a>XSS</a>", cleanString);
+
+		attackString = "<a href=\"&#X6A;avascript:alert(1)\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a>XSS</a>", cleanString);
+
+		attackString = "<a href=\"javascript&colon;alert(1)\">XSS</a>\n"
+				+ "<a href=\"java&Tab;script:alert(1)\">XSS</a>\n"
+				+ "<a href=\"java&NewLine;script:alert(1)\">XSS</a>\n"
+				+ "<a href=\"javascript&colon;alert&lpar;1&rpar;\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a>XSS</a>\n"
+				+ "<a>XSS</a>\n"
+				+ "<a>XSS</a>\n"
+				+ "<a>XSS</a>", cleanString);
+
+		attackString = "<a href=\"javascript:x='%27-alert(1)-%27';\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a>XSS</a>", cleanString);
+
+		attackString = "<a href=\"javascript:x='&percnt;27-alert(1)-%27';\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a>XSS</a>", cleanString);
+	}
+
+	public void testObfuscation() {
+		String attackString = "<script src=data:text/javascript;base64,YWxlcnQoMSk=></script>";
+		String cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<script src=data:text/javascript;base64,&#x59;&#x57;&#x78;&#x6c;&#x63;&#x6e;&#x51;&#x6f;&#x4d;&#x53;&#x6b;&#x3d;></script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<script src=data:text/javascript;base64,%59%57%78%6c%63%6e%51%6f%4d%53%6b%3d></script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<iframe srcdoc=&lt;script&gt;alert&lpar;1&rpar;&lt;&sol;script&gt;></iframe>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<iframe src=\"javascript:'&#x25;&#x33;&#x43;&#x73;&#x63;&#x72;&#x69;&#x70;&#x74;&#x25;&#x33;&#x45;&#x61;&#x6c;&#x65;&#x72;&#x74;&#x28;&#x31;&#x29;&#x25;&#x33;&#x43;&#x25;&#x32;&#x46;&#x73;&#x63;&#x72;&#x69;&#x70;&#x74;&#x25;&#x33;&#x45;'\"></iframe>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<svg><script>&#x5c;&#x75;&#x30;&#x30;&#x36;&#x31;&#x5c;&#x75;&#x30;&#x30;&#x36;&#x63;&#x5c;&#x75;&#x30;&#x30;&#x36;&#x35;&#x5c;&#x75;&#x30;&#x30;&#x37;&#x32;&#x5c;&#x75;&#x30;&#x30;&#x37;&#x34;(1)</script></svg>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		// todo Client-side template injection
+	}
+
+	public void testconfirmLogic() {
+		// todo logic
+		String attackString = "<a href=\"&#x6a;avascript:alert(1)\">XSS</a>";
+		String cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a>XSS</a>", cleanString);
+
+	}
 }
