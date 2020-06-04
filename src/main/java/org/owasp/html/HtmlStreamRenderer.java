@@ -393,9 +393,18 @@ public class HtmlStreamRenderer implements HtmlStreamEventReceiver {
     switch (elementName.length()) {
       case 3:
         if ("xmp".equals(elementName)) { return "pre"; }
+        if ("dir".equals(elementName)) { return "ul"; }
+        break;
+      case 5:
+        if ("frame".equals(elementName)) { return "iframe"; }
+        break;
+      case 6:
+        if ("applet".equals(elementName)) { return "object"; }
         break;
       case 7:
         if ("listing".equals(elementName)) { return "pre"; }
+        if ("acronym".equals(elementName)) { return "abbr"; }
+        if ("command".equals(elementName)) { return "menuitem"; }
         break;
       case 9:
         if ("plaintext".equals(elementName)) { return "pre"; }
