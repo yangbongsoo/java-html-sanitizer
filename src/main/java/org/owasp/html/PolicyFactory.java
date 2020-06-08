@@ -150,11 +150,41 @@ public final class PolicyFactory
       ElementAndAttributePolicies q = f.policies.get(elName);
       if (q != null) {
         p = p.and(q);
+        b.put(elName, p);
       } else {
+
+        // 만약 newPolicy에 ElementAndAttributePolicies 들이 없다면
+        if (f.policies.isEmpty()) { // => disallow or X
+          // disallow는 추가가 안되서 괜찮아졌는데 newPolicy가 X인 경우는 beforePolicy를 따라 가야하므로 추가적인 분기가 필요하다
+          // 분기를 하기 위해선 구분짓는 변수가 필요하다.
+          // 변수를 얻기 위해서는 toFactory 할 때 작업이 필요하다.
+//          if (f.doNothing) {
+//            p = p.andGlobals(f.globalAttrPolicies);
+//            b.put(elName, p);
+//
+//          } else {
+//
+//          }
+          if (f.textContainers.isEmpty()) {
+            p = p.andGlobals(f.globalAttrPolicies);
+            b.put(elName, p);
+          } else {
+
+//            ImmutableSet<String> ybs = dodo(this.textContainers, f.textContainers);
+//            if (ybs != null && !ybs.isEmpty()) {
+//              for (String ss : ybs) {
+//                ElementAndAttributePolicies ppp = this.policies.get(ss);
+//                ppp = ppp.andGlobals(f.globalAttrPolicies);
+//                b.put(ss, ppp);
+//              }
+          }
+
+        } else {
         // Mix in any globals that are not already taken into account in this.
         p = p.andGlobals(f.globalAttrPolicies);
+        b.put(elName, p);
+        }
       }
-      b.put(elName, p);
     }
     // Handle keys that are in f but not in this.
     for (Map.Entry<String, ElementAndAttributePolicies> e

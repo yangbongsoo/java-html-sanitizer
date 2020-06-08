@@ -21,6 +21,11 @@ public class NaverPolicyTest extends TestCase {
   }
 
   @Test
+  public void testName() {
+
+  }
+
+  @Test
   public void testExpandWhiteUrl() {
 
     List<Pattern> patternList = convertToPatternList(WhiteUrlSample.A_HREF_WHITE_URL_LIST);
@@ -187,9 +192,20 @@ public class NaverPolicyTest extends TestCase {
 
   // todo logic check
   public void testconfirmLogic() {
-    String attackString = "<a href=\"&#x6a;avascript:alert(1)\">XSS</a>";
-    String cleanString = NaverPolicy.sanitize(attackString);
-    assertEquals("<a>XSS</a>", cleanString);
+    // svg O
+    // style O
+    // script 는 text를 그냥 짤라버리네
+    // rtc
+    String input = "<rtc>Hi</rtc>";
+    PolicyFactory expandPolicy = NaverPolicy.getExpandPolicy(
+            new HtmlPolicyBuilder()
+                    .allowElements("rtc")
+//                    .allowAttributes("href").matching(
+//                    WhiteUrlUtils.predicate(patternList)
+//            ).onElements("a")
+//                    .allowUrlProtocols("https", "http")
+                    .toFactory());
+    System.out.println(expandPolicy.sanitize(input));
   }
 
   public void testBaseLogic() {
