@@ -58,18 +58,24 @@ public final class PolicyFactory
   private final ImmutableSet<String> textContainers;
   private final HtmlStreamEventProcessor preprocessor;
   private final HtmlStreamEventProcessor postprocessor;
+  private ImmutableSet<String> disallowElementsName;
+  private boolean isNotCalledAllowElementsMethod;
 
   PolicyFactory(
       ImmutableMap<String, ElementAndAttributePolicies> policies,
       ImmutableSet<String> textContainers,
       ImmutableMap<String, AttributePolicy> globalAttrPolicies,
       HtmlStreamEventProcessor preprocessor,
-      HtmlStreamEventProcessor postprocessor) {
+      HtmlStreamEventProcessor postprocessor,
+      ImmutableSet<String> disallowElementsName,
+      boolean isNotCalledAllowElementsMethod) {
     this.policies = policies;
     this.textContainers = textContainers;
     this.globalAttrPolicies = globalAttrPolicies;
     this.preprocessor = preprocessor;
     this.postprocessor = postprocessor;
+    this.disallowElementsName = disallowElementsName;
+    this.isNotCalledAllowElementsMethod = isNotCalledAllowElementsMethod;
   }
 
   /** Produces a sanitizer that emits tokens to {@code out}. */
@@ -150,11 +156,29 @@ public final class PolicyFactory
       ElementAndAttributePolicies q = f.policies.get(elName);
       if (q != null) {
         p = p.and(q);
+        b.put(elName, p);
       } else {
-        // Mix in any globals that are not already taken into account in this.
-        p = p.andGlobals(f.globalAttrPolicies);
+
+        if (f.policies.isEmpty()) {
+          boolean isNotMatchingDisallowElement = true;
+          for (String eachDisallowElement : f.disallowElementsName) {
+            if (elName.equals(eachDisallowElement)) {
+              isNotMatchingDisallowElement = false;
+              break;
+            }
+          }
+
+          if (isNotMatchingDisallowElement || f.isNotCalledAllowElementsMethod) {
+            p = p.andGlobals(f.globalAttrPolicies);
+            b.put(elName, p);
+          }
+
+        } else {
+          // Mix in any globals that are not already taken into account in this.
+          p = p.andGlobals(f.globalAttrPolicies);
+          b.put(elName, p);
+        }
       }
-      b.put(elName, p);
     }
     // Handle keys that are in f but not in this.
     for (Map.Entry<String, ElementAndAttributePolicies> e
@@ -210,6 +234,11 @@ public final class PolicyFactory
             this.postprocessor, f.postprocessor);
     return new PolicyFactory(
         b.build(), allTextContainers, allGlobalAttrPolicies,
-        compositionOfPreprocessors, compositionOfPostprocessors);
+        compositionOfPreprocessors, compositionOfPostprocessors,
+        ImmutableSet.<String>builder()
+          .addAll(this.disallowElementsName)
+          .addAll(f.disallowElementsName)
+          .build(),
+        this.isNotCalledAllowElementsMethod && f.isNotCalledAllowElementsMethod);
   }
 }

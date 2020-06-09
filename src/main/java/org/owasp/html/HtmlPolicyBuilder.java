@@ -194,6 +194,8 @@ public class HtmlPolicyBuilder {
       = Joiner.on(' ').join(DEFAULT_RELS_ON_TARGETTED_LINKS);
 
   private final Map<String, ElementPolicy> elPolicies = Maps.newLinkedHashMap();
+  private final ImmutableSet.Builder<String> disallowElementsName = ImmutableSet.builder();
+  private boolean isNotCalledAllowElementsMethod = true;
   private final Map<String, Map<String, AttributePolicy>> attrPolicies
       = Maps.newLinkedHashMap();
   private final Map<String, AttributePolicy> globalAttrPolicies
@@ -245,12 +247,18 @@ public class HtmlPolicyBuilder {
       // that to infect later allowElement calls for this particular element
       // name.  rejects should have higher priority than allows.
       elPolicies.put(elementName, newPolicy);
+
+      if (ElementPolicy.REJECT_ALL_ELEMENT_POLICY == newPolicy) {
+        disallowElementsName.add(elementName);
+      }
+
       if (!textContainers.containsKey(elementName)) {
         if (METADATA.canContainPlainText(METADATA.indexForName(elementName))) {
           textContainers.put(elementName, true);
         }
       }
     }
+    isNotCalledAllowElementsMethod = false;
     return this;
   }
 
@@ -702,7 +710,7 @@ public class HtmlPolicyBuilder {
     return new PolicyFactory(
         compiled.compiledPolicies, textContainerSet.build(),
         ImmutableMap.copyOf(compiled.globalAttrPolicies),
-        preprocessor, postprocessor);
+        preprocessor, postprocessor, disallowElementsName.build(), isNotCalledAllowElementsMethod);
   }
 
   // Speed up subsequent builds by caching the compiled policies.
