@@ -63,6 +63,67 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : X
+  // afterPolicy : allow
+  @Test
+  public void testAllowElements2_2() {
+    PolicyFactory beforePolicy = new HtmlPolicyBuilder()
+            .toFactory();
+
+    String input = "<p>pText</p>\n<b>bText</b>\n<i>iText</i>";
+    assertEquals("pText\nbText\niText", beforePolicy.sanitize(input));
+
+    PolicyFactory newPolicy = new HtmlPolicyBuilder()
+            .allowElements("p","b")
+            .disallowElements("b")
+            .toFactory();
+
+    PolicyFactory afterPolicy = beforePolicy.and(newPolicy);
+
+    assertEquals("<p>pText</p>\nbText\niText", afterPolicy.sanitize(input));
+  }
+
+  // beforePolicy : X
+  // afterPolicy : allow
+  @Test
+  public void testAllowElements2_3() {
+    PolicyFactory beforePolicy = new HtmlPolicyBuilder()
+            .toFactory();
+
+    String input = "<p>pText</p>\n<b>bText</b>\n<i>iText</i>";
+    assertEquals("pText\nbText\niText", beforePolicy.sanitize(input));
+
+    PolicyFactory newPolicy = new HtmlPolicyBuilder()
+            .allowElements("p","b")
+            .disallowElements("p", "b")
+            .toFactory();
+
+    PolicyFactory afterPolicy = beforePolicy.and(newPolicy);
+
+    assertEquals("pText\nbText\niText", afterPolicy.sanitize(input));
+  }
+
+  // beforePolicy : X
+  // afterPolicy : allow
+  @Test
+  public void testAllowElements2_4() {
+    PolicyFactory beforePolicy = new HtmlPolicyBuilder()
+            .toFactory();
+
+    String input = "<p>pText</p>\n<b>bText</b>\n<i>iText</i>";
+    assertEquals("pText\nbText\niText", beforePolicy.sanitize(input));
+
+    PolicyFactory newPolicy = new HtmlPolicyBuilder()
+            .allowElements("p","b")
+            .disallowElements("")
+            .allowElements("i")
+            .toFactory();
+
+    PolicyFactory afterPolicy = beforePolicy.and(newPolicy);
+
+    assertEquals("<p>pText</p>\n<b>bText</b>\n<i>iText</i>", afterPolicy.sanitize(input));
+  }
+
+  // beforePolicy : X
   // afterPolicy : disallow
   @Test
   public void testAllowElements3() {
@@ -92,6 +153,26 @@ public class AllowDisAllowElementsTest extends TestCase {
     assertEquals("pText\nbText\niText", beforePolicy.sanitize(input));
 
     PolicyFactory newPolicy = new HtmlPolicyBuilder()
+            .disallowElements("p", "i")
+            .toFactory();
+
+    PolicyFactory afterPolicy = beforePolicy.and(newPolicy);
+
+    assertEquals("pText\nbText\niText", afterPolicy.sanitize(input));
+  }
+
+  // beforePolicy : X
+  // afterPolicy : disallow
+  @Test
+  public void testAllowElements3_2() {
+    PolicyFactory beforePolicy = new HtmlPolicyBuilder()
+            .toFactory();
+
+    String input = "<p>pText</p>\n<b>bText</b>\n<i>iText</i>";
+    assertEquals("pText\nbText\niText", beforePolicy.sanitize(input));
+
+    PolicyFactory newPolicy = new HtmlPolicyBuilder()
+            .allowElements("a")
             .disallowElements("p", "i")
             .toFactory();
 
@@ -237,6 +318,26 @@ public class AllowDisAllowElementsTest extends TestCase {
     PolicyFactory afterPolicy = beforePolicy.and(newPolicy);
 
     assertEquals("pText\n<b>bText</b>\niText\nsText", afterPolicy.sanitize(input));
+  }
+
+  // beforePolicy : allow
+  // afterPolicy : disallow
+  @Test
+  public void testAllowElements6_2() {
+    PolicyFactory beforePolicy = new HtmlPolicyBuilder()
+            .allowElements("p", "b", "i", "s")
+            .toFactory();
+
+    String input = "<p>pText</p>\n<b>bText</b>\n<i>iText</i>\n<s>sText</s>";
+    assertEquals("<p>pText</p>\n<b>bText</b>\n<i>iText</i>\n<s>sText</s>", beforePolicy.sanitize(input));
+
+    PolicyFactory newPolicy = new HtmlPolicyBuilder()
+            .disallowElements("p", "p", "b", "b")
+            .toFactory();
+
+    PolicyFactory afterPolicy = beforePolicy.and(newPolicy);
+
+    assertEquals("pText\nbText\n<i>iText</i>\n<s>sText</s>", afterPolicy.sanitize(input));
   }
 
   // beforePolicy : disallow
