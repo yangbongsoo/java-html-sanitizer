@@ -7,7 +7,7 @@ import org.junit.Test;
 public class AllowDisAllowElementsTest extends TestCase {
 
   // beforePolicy : X
-  // afterPolicy : X
+  // newPolicy : X
   @Test
   public void testAllowElements1() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -25,7 +25,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : X
-  // afterPolicy : allow
+  // newPolicy : allow
   @Test
   public void testAllowElements2() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -44,7 +44,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : X
-  // afterPolicy : allow
+  // newPolicy : allow
   @Test
   public void testAllowElements2_1() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -63,7 +63,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : X
-  // afterPolicy : allow
+  // newPolicy : allow
   @Test
   public void testAllowElements2_2() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -83,7 +83,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : X
-  // afterPolicy : allow
+  // newPolicy : allow
   @Test
   public void testAllowElements2_3() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -103,7 +103,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : X
-  // afterPolicy : allow
+  // newPolicy : allow
   @Test
   public void testAllowElements2_4() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -124,7 +124,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : X
-  // afterPolicy : disallow
+  // newPolicy : disallow
   @Test
   public void testAllowElements3() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -143,7 +143,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : X
-  // afterPolicy : disallow
+  // newPolicy : disallow
   @Test
   public void testAllowElements3_1() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -162,7 +162,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : X
-  // afterPolicy : disallow
+  // newPolicy : disallow
   @Test
   public void testAllowElements3_2() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -182,7 +182,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : allow
-  // afterPolicy : X
+  // newPolicy : X
   @Test
   public void testAllowElements4() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -201,7 +201,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : allow
-  // afterPolicy : X
+  // newPolicy : X
   @Test
   public void testAllowElements4_1() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -220,7 +220,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : allow
-  // afterPolicy : allow
+  // newPolicy : allow
   @Test
   public void testAllowElements5() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -240,7 +240,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : allow
-  // afterPolicy : allow
+  // newPolicy : allow
   @Test
   public void testAllowElements5_1() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -260,7 +260,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : allow
-  // afterPolicy : allow
+  // newPolicy : allow
   @Test
   public void testAllowElements5_2() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -280,7 +280,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : allow
-  // afterPolicy : disallow
+  // newPolicy : disallow
   @Test
   public void testAllowElements6() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -301,7 +301,7 @@ public class AllowDisAllowElementsTest extends TestCase {
 
 
   // beforePolicy : allow
-  // afterPolicy : disallow
+  // newPolicy : disallow
   @Test
   public void testAllowElements6_1() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -321,7 +321,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : allow
-  // afterPolicy : disallow
+  // newPolicy : disallow
   @Test
   public void testAllowElements6_2() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -340,8 +340,91 @@ public class AllowDisAllowElementsTest extends TestCase {
     assertEquals("pText\nbText\n<i>iText</i>\n<s>sText</s>", afterPolicy.sanitize(input));
   }
 
+  // beforePolicy : allow
+  // newPolicy : disallow
+  // new2Policy : allow
+  @Test
+  public void testAllowElements6_3() {
+    PolicyFactory beforePolicy = new HtmlPolicyBuilder()
+            .allowElements("p", "b", "i", "s")
+            .toFactory();
+
+    String input = "<p>pText</p>\n<b>bText</b>\n<i>iText</i>\n<s>sText</s>";
+    assertEquals("<p>pText</p>\n<b>bText</b>\n<i>iText</i>\n<s>sText</s>", beforePolicy.sanitize(input));
+
+    PolicyFactory newPolicy = new HtmlPolicyBuilder()
+            .disallowElements("p", "p", "b", "b")
+            .toFactory();
+
+    PolicyFactory afterPolicy = beforePolicy.and(newPolicy);
+
+    assertEquals("pText\nbText\n<i>iText</i>\n<s>sText</s>", afterPolicy.sanitize(input));
+
+    PolicyFactory new2Policy = new HtmlPolicyBuilder()
+            .allowElements("p", "b")
+            .toFactory();
+
+    PolicyFactory after2Policy = afterPolicy.and(new2Policy);
+    assertEquals("<p>pText</p>\n<b>bText</b>\n<i>iText</i>\n<s>sText</s>", after2Policy.sanitize(input));
+  }
+
+  // beforePolicy : allow
+  // newPolicy : disallow
+  // new2Policy : disallow
+  @Test
+  public void testAllowElements6_4() {
+    PolicyFactory beforePolicy = new HtmlPolicyBuilder()
+            .allowElements("p", "b", "i", "s")
+            .toFactory();
+
+    String input = "<p>pText</p>\n<b>bText</b>\n<i>iText</i>\n<s>sText</s>";
+    assertEquals("<p>pText</p>\n<b>bText</b>\n<i>iText</i>\n<s>sText</s>", beforePolicy.sanitize(input));
+
+    PolicyFactory newPolicy = new HtmlPolicyBuilder()
+            .disallowElements("p", "p", "b", "b")
+            .toFactory();
+
+    PolicyFactory afterPolicy = beforePolicy.and(newPolicy);
+
+    assertEquals("pText\nbText\n<i>iText</i>\n<s>sText</s>", afterPolicy.sanitize(input));
+
+    PolicyFactory new2Policy = new HtmlPolicyBuilder()
+            .disallowElements("i", "s")
+            .toFactory();
+
+    PolicyFactory after2Policy = afterPolicy.and(new2Policy);
+    assertEquals("pText\nbText\niText\nsText", after2Policy.sanitize(input));
+  }
+
+  // beforePolicy : allow
+  // newPolicy : disallow
+  // new2Policy : X
+  @Test
+  public void testAllowElements6_5() {
+    PolicyFactory beforePolicy = new HtmlPolicyBuilder()
+            .allowElements("p", "b", "i", "s")
+            .toFactory();
+
+    String input = "<p>pText</p>\n<b>bText</b>\n<i>iText</i>\n<s>sText</s>";
+    assertEquals("<p>pText</p>\n<b>bText</b>\n<i>iText</i>\n<s>sText</s>", beforePolicy.sanitize(input));
+
+    PolicyFactory newPolicy = new HtmlPolicyBuilder()
+            .disallowElements("p", "p", "b", "b")
+            .toFactory();
+
+    PolicyFactory afterPolicy = beforePolicy.and(newPolicy);
+
+    assertEquals("pText\nbText\n<i>iText</i>\n<s>sText</s>", afterPolicy.sanitize(input));
+
+    PolicyFactory new2Policy = new HtmlPolicyBuilder()
+            .toFactory();
+
+    PolicyFactory after2Policy = afterPolicy.and(new2Policy);
+    assertEquals("pText\nbText\n<i>iText</i>\n<s>sText</s>", after2Policy.sanitize(input));
+  }
+
   // beforePolicy : disallow
-  // afterPolicy : X
+  // newPolicy : X
   @Test
   public void testAllowElements7() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -360,7 +443,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : disallow
-  // afterPolicy : allow
+  // newPolicy : allow
   @Test
   public void testAllowElements8() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -380,7 +463,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : disallow
-  // afterPolicy : allow
+  // newPolicy : allow
   @Test
   public void testAllowElements8_1() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -400,7 +483,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : disallow
-  // afterPolicy : allow
+  // newPolicy : allow
   @Test
   public void testAllowElements8_2() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
@@ -420,7 +503,7 @@ public class AllowDisAllowElementsTest extends TestCase {
   }
 
   // beforePolicy : disallow
-  // afterPolicy : disallow
+  // newPolicy : disallow
   @Test
   public void testAllowElements9() {
     PolicyFactory beforePolicy = new HtmlPolicyBuilder()
