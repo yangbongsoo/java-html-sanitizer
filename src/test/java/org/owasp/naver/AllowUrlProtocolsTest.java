@@ -53,7 +53,7 @@ public class AllowUrlProtocolsTest extends TestCase {
 
     PolicyFactory afterPolicy = beforePolicy.and(newPolicy);
 
-    assertEquals("<a href='http://example.com'>Hi</a>", afterPolicy.sanitize(input));
+    assertEquals("<a href=\"http://example.com\">Hi</a>", afterPolicy.sanitize(input));
   }
 
   // before : X

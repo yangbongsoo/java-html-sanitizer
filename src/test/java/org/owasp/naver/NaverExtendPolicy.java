@@ -31,13 +31,17 @@ public final class NaverExtendPolicy {
                     r -> new HtmlStreamEventReceiverWrapper(r) {
                       @Override
                       public void text(String s) {
-                        System.out.println("lower!!");
+                        System.out.println("3. withPreprocessor-upper!! : " + s);
                         underlying.text(s.toLowerCase());
                       }
-
+                    }
+            )
+            .withPostprocessor(
+                    r -> new HtmlStreamEventReceiverWrapper(r) {
                       @Override
-                      public String toString() {
-                        return "lower-text";
+                      public void text(String s) {
+                        System.out.println("4. withPostprocessor : " + s);
+                        underlying.text(s);
                       }
                     }
             )

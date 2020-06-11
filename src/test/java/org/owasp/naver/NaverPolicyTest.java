@@ -4,10 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
-import org.owasp.html.CssSchema;
-import org.owasp.html.HtmlPolicyBuilder;
-import org.owasp.html.HtmlStreamEventReceiverWrapper;
-import org.owasp.html.PolicyFactory;
+import org.owasp.html.*;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -22,7 +19,16 @@ public class NaverPolicyTest extends TestCase {
 
   @Test
   public void testName() {
+    PolicyFactory expandPolicy = NaverPolicy.getExpandPolicy(
+            new HtmlPolicyBuilder()
+                    .allowElements("img")
+                    .allowAttributes("nhn_extra_image")
+                    .matching(Pattern.compile("[a-zA-Z'\"]+"))
+                    .onElements("img")
+                    .toFactory());
 
+    String output = expandPolicy.sanitize("<img src=\"example.com\" nhn_extra_image=abc />");
+    System.out.println(output);
   }
 
   @Test
@@ -129,19 +135,23 @@ public class NaverPolicyTest extends TestCase {
                     r -> new HtmlStreamEventReceiverWrapper(r) {
                       @Override
                       public void text(String s) {
-                        System.out.println("upper!!");
+                        System.out.println("1. withPreprocessor-upper!! : " + s);
                         underlying.text(s.toUpperCase());
                       }
-
+                    }
+            )
+            .withPostprocessor(
+                    r -> new HtmlStreamEventReceiverWrapper(r) {
                       @Override
-                      public String toString() {
-                        return "shouty-text";
+                      public void text(String s) {
+                        System.out.println("2. withPostprocessor : " + s);
+                        underlying.text(s);
                       }
                     }
             )
             .toFactory();
 
-    String spanTagString = "<span>Hi</span>";
+    String spanTagString = "<span>hi</span>";
     String resultString = beforePolicy.sanitize(spanTagString);
     assertEquals("<span>HI</span>", resultString);
 

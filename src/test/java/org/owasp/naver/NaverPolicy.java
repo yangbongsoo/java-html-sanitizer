@@ -1,7 +1,14 @@
 package org.owasp.naver;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import javax.annotation.Nullable;
+
 import org.owasp.html.AttributePolicy;
 import org.owasp.html.CssSchema;
+import org.owasp.html.HtmlChangeListener;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 
@@ -99,9 +106,7 @@ public final class NaverPolicy {
   // iframe(exclude element)
 
   private static String[] imgDefaultAttributeArray = {"align", "alt", "border", "height", "hspace", "ismap", "longdesc", "sizes", "src", "usemap", "vspace", "width", "name"}; // exclude attribute : crossorigin, srcset, decoding, importance, intrinsicsize, loading, referrerpolicy
-  private static String[] inputDefaultAttributeArray = {"accept", "alt", "autocomplete", "autofocus", "checked", "disabled", "form", "formenctype", "formmethod",
-          "formnovalidate", "formtarget", "height", "list", "max", "maxlength", "min", "multiple", "name", "pattern", "placeholder", "readonly", "required", "size",
-          "src", "step", "type", "value", "width", "tabindex", "title"}; // exclude attribute : dirname, formaction, capture, inputmode, minlength, autocorrect, incremental, mozactionhint, orient, results, webkitdirectory
+  private static String[] inputDefaultAttributeArray = {"accept", "alt", "autocomplete", "autofocus", "checked", "disabled", "form", "formenctype", "formmethod", "formnovalidate", "formtarget", "height", "list", "max", "maxlength", "min", "multiple", "name", "pattern", "placeholder", "readonly", "required", "size", "src", "step", "type", "value", "width", "tabindex", "title"}; // exclude attribute : dirname, formaction, capture, inputmode, minlength, autocorrect, incremental, mozactionhint, orient, results, webkitdirectory
   private static String[] insDefaultAttributeArray = {"cite", "datetime"};
 
   // isindex(exclude element)
@@ -208,7 +213,7 @@ public final class NaverPolicy {
   private static String[] videoDefaultAttributeArray = {"autoplay", "controls", "height", "loop", "muted", "poster", "preload", "src", "width"}; // exclude attribute : autoPictureInPicture buffered controlslist crossorigin currentTime disablePictureInPicture disableRemotePlayback duration intrinsicsize playsinline
 
   // wbr(only include global attributes)
-  // xmp(only include global attributes)
+  // xmp(only include global attributes) => convert <pre> tag by HtmlStreamRenderer.safeName
   // xcustom(exclude element)
 
   private static PolicyFactory NAVER_POLICY;
@@ -655,17 +660,40 @@ public final class NaverPolicy {
   private NaverPolicy() {
   }
 
-  public static String sanitize(String html) {
-    return getPolicy().sanitize(html);
-  }
-
-  public static PolicyFactory getExpandPolicy(PolicyFactory policyFactory) {
-    return getPolicy().and(policyFactory);
-  }
-
-  private static PolicyFactory getPolicy() {
+  public static PolicyFactory toFactory() {
     assert NAVER_POLICY != null : "NAVER_POLICY init fail";
     return NAVER_POLICY;
+  }
+
+  public static String sanitize(String html) {
+    return toFactory().sanitize(html);
+  }
+
+  public static <CTX> String sanitize(String html, @Nullable HtmlChangeListener<CTX> listener, @Nullable CTX context) {
+    return toFactory().sanitize(html, listener, context);
+  }
+
+  public static PolicyFactory getExpandPolicy(PolicyFactory newPolicy) {
+    return toFactory().and(newPolicy);
+  }
+
+  public static PolicyFactory toFactoryWithHrefWhiteUrls(List<String> whiteUrlList) {
+    return getExpandPolicyWithHrefWhiteUrls(WhiteUrlUtils.convertToPatternList(whiteUrlList));
+  }
+
+  public static PolicyFactory toFactoryWithHrefWhiteUrls(String[] whiteUrlList) {
+    return getExpandPolicyWithHrefWhiteUrls(WhiteUrlUtils.convertToPatternList(Arrays.asList(whiteUrlList)));
+  }
+
+  private static PolicyFactory getExpandPolicyWithHrefWhiteUrls(List<Pattern> patternList) {
+    return getExpandPolicy(new HtmlPolicyBuilder()
+            .allowElements("a")
+            .allowAttributes("href").matching(
+                    WhiteUrlUtils.predicate(patternList)
+            ).onElements("a")
+            .allowUrlProtocols("https", "http")
+            .allowWithoutAttributes("a", "font", "img", "input", "span")
+            .toFactory());
   }
 
   private static String[] appendGlobalAttributes(String[] defaultAttributeArray) {
