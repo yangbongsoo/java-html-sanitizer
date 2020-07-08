@@ -143,8 +143,10 @@ public final class HtmlSanitizer {
       HtmlToken token = lexer.next();
       switch (token.type) {
         case TEXT:
+          String testStr = htmlContent.substring(token.start, token.end);
+          System.out.println(testStr);
           receiver.text(
-              Encoding.decodeHtml(htmlContent.substring(token.start, token.end)));
+              Encoding.decodeHtml(testStr));
           break;
         case UNESCAPED:
           receiver.text(Encoding.stripBannedCodeunits(

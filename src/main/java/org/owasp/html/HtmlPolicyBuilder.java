@@ -907,6 +907,15 @@ public class HtmlPolicyBuilder {
       });
     }
 
+    public AttributeBuilder disallowMatching(final Pattern pattern) {
+      return matching(new AttributePolicy() {
+        public @Nullable String apply(
+                String elementName, String attributeName, String value) {
+          return pattern.matcher(value).matches() ? null : value;
+        }
+      });
+    }
+
     /**
      * Restrict the values allowed by later {@code allow*} calls to those
      * matching the given predicate.

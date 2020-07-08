@@ -4,7 +4,10 @@ import com.google.common.collect.ImmutableSet;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
-import org.owasp.html.*;
+import org.owasp.html.CssSchema;
+import org.owasp.html.HtmlPolicyBuilder;
+import org.owasp.html.HtmlStreamEventReceiverWrapper;
+import org.owasp.html.PolicyFactory;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -19,18 +22,58 @@ public class NaverPolicyTest extends TestCase {
 
   @Test
   public void testName() {
-    PolicyFactory expandPolicy = NaverPolicy.getExpandPolicy(
+    PolicyFactory expandPolicy =
             new HtmlPolicyBuilder()
                     .allowElements("img")
-                    .allowAttributes("nhn_extra_image")
-                    .matching(Pattern.compile("[a-zA-Z'\"]+"))
+                    .allowAttributes("nhn_extra_image", "src")
+                    .disallowMatching(Pattern.compile("[A-Z]+"))
+//                    .allowAttributes("nhn_extra_image")
+//                    .matching(Pattern.compile("[b-zA-Z'\"]+")) // white list 매칭
+//                    .disallowMatching(Pattern.compile("[A-Z]+")) //
+//                    .matching(new AttributePolicy() {
+//                      @Nullable
+//                      @Override
+//                      public String apply(String elementName, String attributeName, String value) {
+//                        return Pattern.compile("[b-zA-Z'\"]+").matcher(value).matches() ? null : value;
+//                      }
+//                    })
                     .onElements("img")
-                    .toFactory());
+                    .allowWithoutAttributes("img")
+                    .toFactory();
 
-    String output = expandPolicy.sanitize("<img src=\"example.com\" nhn_extra_image=abc />");
+    String output = expandPolicy.sanitize("<img src=\"example.com\" nhn_extra_image=abcd />");
     System.out.println(output);
   }
 
+  // todo 1. 먼저 한 HtmlPolicyBuilder 에서 matching 이 속성 별로 각각 다르게 잘 들어가는 구조인지 확인
+  public void testMatching1() {
+    PolicyFactory policy =
+            new HtmlPolicyBuilder()
+                    .allowElements("img", "a", "b", "i", "s")
+                    .allowAttributes("custom_attr")
+                    .matching(Pattern.compile("[A-Z]+"))
+                    .onElements("img")
+
+                    .allowAttributes("ybs")
+                    .matching(Pattern.compile("[B-Z]+"))
+                    .onElements("img")
+
+
+                    .allowAttributes("custom_attr")
+                    .matching(Pattern.compile("[a-z]+"))
+                    .onElements("a")
+
+
+                    .allowWithoutAttributes("img", "a")
+                    .toFactory();
+
+    String output = policy.sanitize("<img src=\"example.com\" nhn_extra_image=abcd />");
+    System.out.println(output);
+  }
+
+  // todo 2. 내가 한 속성에 대해 matching disallowMatching 두개를 추가한다고 했을 때 어떻게 동작하는지 확인
+
+  // todo 3. newPolicy 를 만들어서 before 와 and 로 합쳐질 때 after 는 matching 이 어떻게 동작하는지 확인
   @Test
   public void testExpandWhiteUrl() {
 
@@ -96,7 +139,6 @@ public class NaverPolicyTest extends TestCase {
 //		String clean = NaverHtmlPolicy.getDefaultPolicy().sanitize(dirty);
 //		System.out.println(clean);
   }
-
 
   @Test
   public void testExpandLogic1() {
